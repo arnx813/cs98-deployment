@@ -4,7 +4,7 @@ TODO: super short project description, some sample screenshots or mockups that y
 
 ## Architecture
 
-TODO:  overall descriptions of code organization and tools and libraries used
+Spring Boot for the backend. Potentially Google Firebase for the database. React JSX for the front end.
 
 ## Setup
 
