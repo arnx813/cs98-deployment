@@ -1,0 +1,32 @@
+.discover {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  .main {
+    align-items: center;
+    justify-content: center;
+    text-align-last: center;
+
+    .header {
+      font-size: x-large;
+      margin-bottom: 45px;
+      margin-top: 40px;
+      font-weight: 500;
+    }
+
+    .pictures {
+      display: flex;
+      flex-direction: column;
+
+      .row-of-pictures {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        // justify-content: space-around;
+        margin-bottom: 20px;
+      }
+    }
+  }
+}
