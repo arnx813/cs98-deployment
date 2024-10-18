@@ -1,6 +1,6 @@
 # Project Name
 
-TODO: super short project description, some sample screenshots or mockups that you keep up-to-date.
+We are building Dataset Nexus, a platform enabling users to buy and sell datasets for ML training. Our focus is on hobyyists and the more tail-end of the market, as there are other providers in the higher end market: Scale AI and LabelBox.
 
 ## Architecture
 
