@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import "./discover.scss";
 import Dataset from "./components/Dataset";
+import "./discover.scss";
 import medicalImaging from "/Users/davidmatusz/Desktop/CS98.01/project-dataset-nexus/src/assets/medical_imaging.png";
 import satelliteImagery from "/Users/davidmatusz/Desktop/CS98.01/project-dataset-nexus/src/assets/satellite_and_areal.png";
 import autonomousDriving from "/Users/davidmatusz/Desktop/CS98.01/project-dataset-nexus/src/assets/autonomous_driving.png";

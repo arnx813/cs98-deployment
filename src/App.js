@@ -3,6 +3,7 @@ import Login from "./Login";
 import Discover from "./Discover";
 import { useNavigate } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Checkout from "./Checkout";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
             <Route index element={<Login />} />
           </Route>
           <Route path="/discover" element={<Discover />} />
+          <Route path="/checkout" element={<Checkout />} />
         </Routes>
       </BrowserRouter>
     </div>

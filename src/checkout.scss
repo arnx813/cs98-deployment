@@ -1,0 +1,32 @@
+.checkout {
+  display: flex;
+  flex-direction: column;
+
+  .main {
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+    width: 60vw;
+    background-color: aqua;
+
+    .information-leftside {
+      display: flex;
+      flex-direction: column;
+      width: 50%;
+
+      .confirm-and-pay {
+        display: flex;
+        flex-direction: row;
+        border-bottom: 1px solid rgb(203, 203, 203);
+        font-size: x-large;
+        font-weight: 500;
+      }
+    }
+
+    .dataset-rightside {
+      display: flex;
+      flex-direction: column;
+      width: 50%;
+    }
+  }
+}
