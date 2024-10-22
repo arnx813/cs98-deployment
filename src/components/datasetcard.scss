@@ -1,5 +1,5 @@
 .dataset-card {
-  width: 70%;
+  width: 80%;
   position: relative;
   border: 1px solid rgb(203, 203, 203);
   border-radius: 12px;
@@ -33,10 +33,19 @@
       }
 
       .fee-details {
-        margin-top: 10px;
+        margin-top: 20px;
 
-        p {
-          font-size: 1rem;
+        .fee-ele {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+
+          p {
+            margin-right: 20px;
+            font-size: small;
+            margin-bottom: 5px;
+          }
         }
       }
     }
