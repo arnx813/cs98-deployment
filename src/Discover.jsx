@@ -3,12 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Dataset from "./components/Dataset";
 import "./discover.scss";
-import medicalImaging from "/Users/davidmatusz/Desktop/CS98.01/project-dataset-nexus/src/assets/medical_imaging.png";
-import satelliteImagery from "/Users/davidmatusz/Desktop/CS98.01/project-dataset-nexus/src/assets/satellite_and_areal.png";
-import autonomousDriving from "/Users/davidmatusz/Desktop/CS98.01/project-dataset-nexus/src/assets/autonomous_driving.png";
-import abstractArt from "/Users/davidmatusz/Desktop/CS98.01/project-dataset-nexus/src/assets/abstract_art.png";
-import africanWildlife from "/Users/davidmatusz/Desktop/CS98.01/project-dataset-nexus/src/assets/african_wildlife.png";
-import asianPeople from "/Users/davidmatusz/Desktop/CS98.01/project-dataset-nexus/src/assets/asian_people.png";
+import medicalImaging from "../src/assets/medical_imaging.png";
+import satelliteImagery from "../src/assets/satellite_and_areal.png";
+import autonomousDriving from "../src/assets/autonomous_driving.png";
+import abstractArt from "../src/assets/abstract_art.png";
+import africanWildlife from "../src/assets/african_wildlife.png";
+import asianPeople from "../src/assets/asian_people.png";
 
 const Discover = () => {
   const [email, setEmail] = useState(true);

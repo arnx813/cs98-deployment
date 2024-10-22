@@ -1,23 +1,24 @@
-import { useState } from "react";
-import Login from "./Login";
-import Discover from "./Discover";
-import { useNavigate } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Checkout from "./Checkout";
+
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { SignupForm } from "./Authentication/signup-auth";
+import { LoginAuth } from "./Authentication/login-auth";
+import Discover from "./Discover"
+import Checkout from "./Checkout"
+
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/">
-            <Route index element={<Login />} />
-          </Route>
-          <Route path="/discover" element={<Discover />} />
-          <Route path="/checkout" element={<Checkout />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element ={ <SignupForm />} /> 
+        <Route path="/login" element={<LoginAuth />} />
+        <Route path="/discover" element={<Discover/>} />
+        <Route path="/checkout" element={<Checkout />} />
+      </Routes>
+      
+
+    </Router>
   );
 }
 

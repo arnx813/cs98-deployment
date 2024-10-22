@@ -1,14 +1,9 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import Dataset from "./components/Dataset";
-import arrowForCheckout from "/Users/davidmatusz/Desktop/CS98.01/project-dataset-nexus/src/assets/arrow_checkout.png";
-import satelliteImagery from "/Users/davidmatusz/Desktop/CS98.01/project-dataset-nexus/src/assets/satellite_and_areal.png";
+import satelliteImagery from "../src/assets/satellite_and_areal.png";
 import "./checkout.scss";
 import DatasetCard from "./components/DatasetCard";
 
 const Checkout = () => {
-  const navigate = useNavigate();
 
   return (
     <div className="checkout">
