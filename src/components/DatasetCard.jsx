@@ -1,22 +1,3 @@
-// import { useState } from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import "./datasetcard.scss";
-
-// const DatasetCard = ({ image }) => {
-//   const navigate = useNavigate();
-
-//   return (
-//     <div className="dataset-card">
-//       <img src={image} />
-//       <div className="pricing">
-//         <p>$323 per month</p>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default DatasetCard;
-
 import "./datasetcard.scss";
 
 const DatasetCard = ({ image }) => {

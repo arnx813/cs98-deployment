@@ -4,6 +4,7 @@ import Discover from "./Discover";
 import { useNavigate } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Checkout from "./Checkout";
+import Profile from "./Profile";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           </Route>
           <Route path="/discover" element={<Discover />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </BrowserRouter>
     </div>
