@@ -1,6 +1,5 @@
 
 import "./navbar.scss";
-
 import profileImage from "../assets/profile.jpeg";
 import nexusLogo from "../assets/nexus_temp_logo.jpeg";
 import settingsImage from "../assets/settings.png";

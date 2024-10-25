@@ -3,7 +3,10 @@ import { Link } from "react-router-dom"
 
 import { buttonVariants } from "../components/ui/button"
 import { cn } from "../lib/utils"
-import { UserAuthForm } from "../components/user-auth-form"
+import { UserAuthForm } from "../components/auth/user-auth-form"
+
+// import { UserAuthForm } from "@/components/auth/user-auth-form"
+
 
 
 export const description =
@@ -14,7 +17,7 @@ export function SignupForm() {
 
   return (
     <>
-      <div className="md:hidden">
+      <div className="tailwind-scope md:hidden">
           <Image
             src="/examples/authentication-light.png"
             width={1280}

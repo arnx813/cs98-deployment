@@ -1,0 +1,17 @@
+.purchase-button {
+  display: flex;
+  flex-direction: row;
+  width: 80%;
+  border: 1px solid rgb(203, 203, 203);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  cursor: pointer;
+
+  img {
+    width: 40px;
+  }
+
+  p {
+    margin-left: 60px;
+  }
+}
