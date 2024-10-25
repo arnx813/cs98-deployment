@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./providercard.scss";
-import janeDoe from "/Users/davidmatusz/Desktop/CS98.01/project-dataset-nexus/src/assets/jane_doe.png";
+import janeDoe from "../assets/jane_doe.png";
 
 const ProviderCard = () => {
   const navigate = useNavigate();
