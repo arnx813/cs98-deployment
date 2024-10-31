@@ -1,0 +1,43 @@
+.checkout {
+  display: flex;
+  flex-direction: column;
+
+  .main {
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+    width: 60vw;
+
+    .information-leftside {
+      display: flex;
+      flex-direction: column;
+      width: 50%;
+
+      .confirm-and-pay {
+        display: flex;
+        flex-direction: row;
+        border-bottom: 1px solid rgb(203, 203, 203);
+        font-size: x-large;
+        font-weight: 500;
+      }
+
+      .your-dataset {
+        border-bottom: 1px solid rgb(221, 221, 221);
+      }
+
+      .choose-how-to-pay {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-bottom: 1px solid rgb(203, 203, 203);
+      }
+    }
+
+    .dataset-rightside {
+      display: flex;
+      flex-direction: column;
+      width: 50%;
+      height: 100%;
+    }
+  }
+}

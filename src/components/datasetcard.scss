@@ -1,0 +1,53 @@
+.dataset-card {
+  width: 80%;
+  position: relative;
+  border: 1px solid rgb(203, 203, 203);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 20px auto;
+
+  .image-container {
+    position: relative;
+    width: 100%;
+    height: auto;
+
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+
+    .pricing-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      background-color: rgba(255, 255, 255, 1);
+      padding: 10px;
+      border-radius: 0 0 12px 12px;
+      width: 100%;
+
+      p {
+        margin: 0;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      .fee-details {
+        margin-top: 20px;
+
+        .fee-ele {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+
+          p {
+            margin-right: 20px;
+            font-size: small;
+            margin-bottom: 5px;
+          }
+        }
+      }
+    }
+  }
+}

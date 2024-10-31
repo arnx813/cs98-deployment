@@ -1,0 +1,24 @@
+.provider-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border: 1px solid rgb(234, 234, 234);
+  border-radius: 8px;
+  width: 90%;
+  margin: 10px;
+  margin-bottom: 35px;
+
+  img {
+    margin-left: 15px;
+  }
+
+  .provider-info {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+
+    p {
+      margin-top: 0px;
+    }
+  }
+}
