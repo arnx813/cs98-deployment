@@ -1,0 +1,125 @@
+.discover {
+    .dataset-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .banner {
+        width: 100%;
+        .banner-image {
+          width: 100%;
+          height: 300px;
+          object-fit: cover;
+        }
+      }
+  
+      .content {
+        display: flex;
+        justify-content: space-between;
+        width: 80%;
+        margin-top: 20px;
+  
+        .left-content {
+          flex: 2;
+          padding-right: 20px;
+  
+          .dataset-title {
+            font-size: 32px;
+            font-weight: bold;
+          }
+  
+          .manager {
+            font-size: 18px;
+            margin-top: 5px;
+            color: gray;
+          }
+  
+          .details-table {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-collapse: collapse;
+  
+            .table-row {
+              display: flex;
+              border-bottom: 1px solid #ddd;
+  
+              .table-cell {
+                flex: 1;
+                padding: 10px;
+                border-right: 1px solid #ddd;
+  
+                &:last-child {
+                  border-right: none;
+                }
+              }
+            }
+          }
+  
+          .description {
+            margin-top: 30px;
+  
+            h2 {
+              font-size: 24px;
+              margin-bottom: 10px;
+            }
+  
+            p {
+              font-size: 16px;
+              line-height: 1.5;
+              color: #555;
+            }
+          }
+        }
+  
+        .right-content {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+  
+          .pricing-card {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+  
+            h2 {
+              font-size: 24px;
+              margin-bottom: 10px;
+  
+              span {
+                font-size: 16px;
+                color: gray;
+              }
+            }
+  
+            .pricing-details {
+              margin-top: 10px;
+              font-size: 14px;
+              color: #555;
+            }
+  
+            .order-button {
+              margin-top: 20px;
+              padding: 10px 20px;
+              background-color: #4f46e5;
+              color: white;
+              border: none;
+              border-radius: 5px;
+              cursor: pointer;
+            }
+  
+            .message-button {
+              margin-top: 10px;
+              padding: 10px 20px;
+              background-color: #fff;
+              color: #4f46e5;
+              border: 1px solid #4f46e5;
+              border-radius: 5px;
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    }
+  }
+  
