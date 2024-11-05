@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Login from "./Login";
 import Discover from "./Discover";
+import DatasetPage from "./DatasetPage"
 import { useNavigate } from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Checkout from "./Checkout";
@@ -20,6 +21,7 @@ function App() {
           <Route path="/discover" element={<Discover />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/dataset-example" element={<DatasetPage />} />
         </Routes>
       </Router>
     </div>
