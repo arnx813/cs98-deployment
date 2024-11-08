@@ -3,7 +3,7 @@ import Login from "./Login";
 import Discover from "./Discover";
 import DatasetPage from "./DatasetPage"
 import { useNavigate } from "react";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Checkout from "./Checkout";
 import Profile from "./Profile";
 import { SignupForm } from "./Authentication/signup-auth";
@@ -17,13 +17,15 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
-          <Route path="/" element={<SignupForm/>} />
+          <Route path="/" element={<SignupForm />} />
           <Route path="/login" element={<LoginAuth />} />
           <Route path="/discover" element={<Discover />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/dataset-example" element={<DatasetPage />} />
           <Route path="/upload" element={<UploadForm />} />
+          {/* <Route path="dataset-example" element={<DatasetPage />} /> */}
+          <Route path="/dataset/:id" element={<DatasetPage />} />
         </Routes>
       </Router>
     </div>
