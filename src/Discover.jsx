@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import Dataset from "./components/Dataset";
+import DatasetItem from "./components/DatasetItem";
 import "./discover.scss";
 import medicalImaging from "./assets/medical_imaging.png";
 import satelliteImagery from "./assets/satellite_and_areal.png";
@@ -23,34 +23,34 @@ const Discover = () => {
         <p className="header">Explore our starter kit</p>
         <div className="pictures">
           <div className="row-of-pictures">
-            <Dataset
+            <DatasetItem
               image={medicalImaging}
               description="Medical Imaging - Cancer"
               price="$2,300 per month"
             />
-            <Dataset
+            <DatasetItem
               image={satelliteImagery}
               description="Satellite & Aerial Imagery"
               price="$2,367 per month"
             />
-            <Dataset
+            <DatasetItem
               image={autonomousDriving}
               description="Autonomous Driving"
               price="$5,500 per month"
             />
           </div>
           <div className="row-of-pictures">
-            <Dataset
+            <DatasetItem
               image={abstractArt}
               description="Abstract Art"
               price="$2,300 per month"
             />
-            <Dataset
+            <DatasetItem
               image={africanWildlife}
               description="African Wildlife"
               price="$2,300 per month"
             />
-            <Dataset
+            <DatasetItem
               image={asianPeople}
               description="Asian People"
               price="$2,300 per month"
