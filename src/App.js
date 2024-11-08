@@ -8,7 +8,8 @@ import Checkout from "./Checkout";
 import Profile from "./Profile";
 import { SignupForm } from "./Authentication/signup-auth";
 import { LoginAuth } from "./Authentication/login-auth";
-
+import { SettingsDialog } from "./components/settings-dialog";
+import { UploadForm } from "./components/upload-form";
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/dataset-example" element={<DatasetPage />} />
+          <Route path="/upload" element={<UploadForm />} />
         </Routes>
       </Router>
     </div>
