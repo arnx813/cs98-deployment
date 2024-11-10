@@ -10,7 +10,7 @@ import { SignupForm } from "./Authentication/signup-auth";
 import { LoginAuth } from "./Authentication/login-auth";
 import { SettingsDialog } from "./components/settings-dialog";
 import { UploadForm } from "./components/upload-form";
-
+import { Toaster } from "./components/ui/toaster";
 
 function App() {
   return (
@@ -26,8 +26,10 @@ function App() {
           <Route path="/upload" element={<UploadForm />} />
           {/* <Route path="dataset-example" element={<DatasetPage />} /> */}
           <Route path="/dataset/:id" element={<DatasetPage />} />
+          
         </Routes>
       </Router>
+      <Toaster/>
     </div>
   );
 }

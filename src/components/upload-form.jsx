@@ -1,22 +1,33 @@
 "use client"
  
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm, useFieldArray } from "react-hook-form"
-import { z } from "zod"
-import { Toast } from "./ui/toast"
-import { useToast } from "../hooks/use-toast"
+import React, {useState, useRef} from 'react';
 
-import { buttonVariants } from "src/components/ui/button"
+import { Icons } from './icons';
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { useToast } from "../hooks/use-toast"
 import { Button } from "src/components/ui/button"
 import { Label } from "./ui/label"
+import { ScrollArea } from 'src/components/ui/scroll-area'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "src/components/ui/dialog"
 
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-  } from "src/components/ui/select"
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from 'src/components/ui/tooltip'
+
+
 
 import {
   Form,
@@ -34,7 +45,7 @@ import { Textarea } from "./ui/textarea"
 import { Separator } from "./ui/separator"
 
 const profileFormSchema = z.object({
-    name: z
+    datasetName: z
       .string()
       .min(2, {
         message: "Username must be at least 2 characters.",
@@ -42,12 +53,29 @@ const profileFormSchema = z.object({
       .max(30, {
         message: "Username must not be longer than 30 characters.",
       }),
-    email: z
+    description: z
       .string({
-        required_error: "Please select an email to display.",
-      })
-      .email(),
-    bio: z.string().max(160).min(4),
+        required_error: "Please include a description.",
+      }).max(160).min(4),
+    price: z.coerce.number(),
+      
+    file: z
+      .any({
+        required_error: "Please upload a dataset.",
+      }).refine(value => value instanceof File, 
+        {
+          message: "Please upload a valid zip file."
+        }
+      ),
+    preview: z
+      .array(
+        z.any().refine(
+          value => value instanceof File,
+          {
+            message: "Please upload a valid image file."
+          }
+        )
+      ),
 
   })
   
@@ -68,203 +96,277 @@ const profileFormSchema = z.object({
       mode: "onChange",
     })
   
-    const { fields, append } = useFieldArray({
-      name: "urls",
-      control: form.control,
-    })
+
+
     const { toast } = useToast()
+    const [zipFileName, setZipFileName] = useState('');
+    const [previewFileNames, setPreviewFileNames] = useState([]);
+    const zipInputRef = useRef(null);
+    const fileInputRef = useRef(null);
+    const [open, setOpen] = useState(true)
+
+
+
   
-    function onSubmit(data) {
-      toast({
-        title: "You submitted the following values:",
-        description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
-        ),
-      })
-    }
+    const handleRemoveFile = (index) => {
+      setPreviewFileNames((prevFiles) => prevFiles.filter((_, i) => i !== index));
+      form.setValue(
+        'preview',
+        previewFileNames.filter((_, i) => i !== index)
+      );
+    };
+  
+
+    const onSubmit = async (data) => {
+      try {
+        const formData = new FormData();
+
+        formData.append('datasetName', data.datasetName);
+        formData.append('description', data.description);
+        formData.append('price', data.price);
+        const tags = []
+        tags.push('classes')
+        formData.append('files', data.file)
+        data.preview.forEach(element => {
+          formData.append('files', element)
+          tags.push('preview_image')
+        });
+        formData.append('tags', tags)
+    
+        // Send the request using fetch or axios
+        const response = await fetch('http://localhost:8080/datasets/uploadDataset', {
+          method: 'POST',
+          body: formData, // Ensure `FormData` is sent as the body
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to upload file');
+        }
+    
+        console.log('File uploaded successfully');
+        setOpen(false)
+        toast({
+          title: 'Success!',
+          description: 'Your file has been uploaded successfully.'
+        });
+        
+      } catch (error) {
+        console.error('Error uploading file:', error);
+      }
+    };
+    
   
     return (
-      <div className="space-y-6 p-10 pb-16 md:block">
-        <div className="space-y-0.5">
-          <h2 className="text-2xl font-bold tracking-tight"> Upload</h2>
-          <p className="text-muted-foreground">Insert Model Information and Upload Data</p>
-        </div>
-        <Separator className="my-6"/>
-        <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
-          <aside className="-mx-4 lg:w-1/6">
-          </aside>
-          <div className="flex-1 lg:max-w-2xl">
+      <Dialog open={open} onOpenChange={setOpen}>
         
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="datanexus" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+        <DialogContent className="sm:max-w-[80vw] lg:h-[85vh] ">
+        
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit, (e) => {console.log(e)})} className="space-y-8">
+            <div className="space-y-1 p-8  md:block">
+              <DialogHeader>
+                <DialogTitle>
+                  Upload
+                </DialogTitle>
+                <DialogDescription>Insert Model Information and Upload Data</DialogDescription>
+              </DialogHeader>
+              <Separator className="my-6"/>
+              <ScrollArea className="h-[60vh] w-[75vw] overflow-hidden">
+              <div className="space-y-4 p-8 pb-6 md:block">
+                <FormField
+                  control={form.control}
+                  name="datasetName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a verified email to display" />
-                        </SelectTrigger>
+                        <Input placeholder="datanexus" {...field} value={field.value ?? ''} /> 
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="m@example.com">m@example.com</SelectItem>
-                        <SelectItem value="m@google.com">m@google.com</SelectItem>
-                        <SelectItem value="m@support.com">m@support.com</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      You can manage verified email addresses in your{" "}
-                      <Link href="/examples/forms">email settings</Link>.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
-
-
-              <FormField
-                control={form.control}
-                name="bio"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="hellower"
-                        className="resize-none"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Tell us a bit about the data.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-
-              <FormField
-                control={form.control}
-                name="bio"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Price</FormLabel>
-                    <FormControl>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <span className="text-muted-foreground">$</span>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="hellower"
+                          className="resize-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Tell us a bit about the data.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Price</FormLabel>
+                      <FormControl>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                          <span className="text-muted-foreground">$</span>
+                        </div>
+                        <Input type="number" placeholder="Enter price" className="pl-9" onChange={(e) => {field.onChange(parseInt(e.target.value,10))}}/>
                       </div>
-                      <Input id="currency" type="number" min={0} max={10000} step={0.01} placeholder="0.00" className="pl-9" />
-                    </div>
-      
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              {/* <div>
-                {fields.map((field, index) => (
-                  <FormField
-                    control={form.control}
-                    key={field.id}
-                    name={`urls.${index}.value`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className={cn(index !== 0 && "sr-only")}>
-                          URLs
-                        </FormLabel>
-                        <FormDescription className={cn(index !== 0 && "sr-only")}>
-                          Add links to your website, blog, or social media profiles.
-                        </FormDescription>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                ))}
-
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="mt-2"
-                  onClick={() => append({ value: "" })}
-                >
-                  Add URL
-                </Button>
-              </div> */}
-
-              <FormField
-                control={form.control}
-                name="bio"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Upload</FormLabel>
-                    <FormControl>
-                      <div className="flex flex-nowrap">
-                        <div className="hover">
+              {/* Single .zip file upload */}
+                <FormField
+                  control={form.control}
+                  name="file"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Upload</FormLabel>
+                      <FormControl>
+                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                          <div className='flex items-center gap-2'>
+                          <Button as="Label" variant="outline" type="button" onClick={() => zipInputRef.current && zipInputRef.current.click()}>
+                          <Icons.Upload className="mr-2 h-4 w-4" />  Choose a File
+  
+                          </Button>
                           <Input
-                            placeholder="Picture"
+                            ref={zipInputRef}
+                            id="zip-upload"
                             type="file"
-                            accept="image/*, application/pdf"
-                            variant="outline"
-                            className="file:bg-neutral-50 hover:file:bg-neutral-100 file:rounded-md file:border-neutral-50 file:cursor-pointer"
-                            onChange={(event) =>
-                              field.onChange(event.target.files ? event.target.files[0] : null)
-                            }
+                            accept=".zip"
+                            className="hidden"
+                            onChange={(event) => {
+                              const file = event.target.files ? event.target.files[0] : null;
+                              setZipFileName(file ? file.name : '');
+                              field.onChange(file);
+                            }}
                           />
-        
+                          </div>
+             
+                        
+                          <div className='grid gap-2'>
+             
+                            {zipFileName && (
+                             
+                              <div className='flex items-center gap-2'>
+                                <Icons.File className="mr-2 h-4 w-4"/>
+                                <div>
+                                  <Label>
+                                  {zipFileName}
+                                </Label>
+
+                                </div>
+                              </div>
+                            )}
+              
+
+                          </div>
                         </div>
-                        <Separator orientation="vertical" />
+                        
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                        <div className="">
-                          <Button type="button" variant="outline" 
-                          onClick={() => append({ value: "" })}
-                          > Add Preview Images</Button>
-                        </div>
+                <FormField
+                  control={form.control}
+                  name="preview"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Preview Images</FormLabel>
+                      <FormControl>
+                        <>
+                          <div className="flex flex-nowrap items-center">
+                            <Button variant="outline" type="button" onClick={() => fileInputRef.current && fileInputRef.current.click()}>
+                              <Icons.Upload className="mr-2 h-4 w-4" /> Select Preview Images
+                  
+                            </Button>
+                            <Input
+                              ref={fileInputRef}
+                              id="multi-upload"
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              multiple
+                              onChange={(event) => {
+                                const files = event.target.files ? Array.from(event.target.files) : [];
+                                const newFileNames = files.map((file) => file.name);
+                                setPreviewFileNames((prev) => [...prev, ...newFileNames]);
+                                field.onChange([...(field.value || []), ...files]);
+                              }}
+                            />
+                          </div>
 
-                      </div>
-                      
-                      
-                    </FormControl>
-                    <FormDescription>
-                      Tell us a bit about the data.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                          {previewFileNames.length > 0 && (
+                            <div className="grid gap-2 ">
+                              <ul>
+                              {previewFileNames.slice(0,3).map((name, index) => (
+                                <li key={index}>
 
+                                <div className='flex items-center gap-2'>
+                                  <Icons.File className="mr-2 h-4 w-4"/>
+                                  
+                                    <TooltipProvider>
+                                      <Tooltip>
+                                        {/* {name} */}
+                                        {previewFileNames[index].length > 10 ? (
+                                          
+                                          <TooltipTrigger asChild>
+                                            <div className='w-32 truncate'>
+                                              <Label>{name}</Label>
+                                            </div>
+                                          </TooltipTrigger>
+                                          
+                                        ) : (
+                                          <div className='w-32'>
+                                            <Label>{name}</Label>
+                                          </div>                                          
+                                        )}
+                                        <TooltipContent>{name}</TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>     
+                                  <div>
+                                    <Button type="button" variant="ghost" onClick={() => handleRemoveFile(index)}><Icons.Trash className="mr-2 h-4 w-4" /></Button>
+                                  </div>
+                                </div>
 
-
-              <Button type="submit">Submit</Button>
+                                  </li>
+                                  ))}
+                                </ul>
+                                {previewFileNames.length > 3 && (
+                                  <p className="grid grid-cols-6 gap-4 text-sm text-center mt-1">
+                                    {previewFileNames.length - 3} more file(s)...
+                                  </p>
+                                )}
+                            </div>
+                          )}
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 </div>
+                </ScrollArea> 
+                <DialogFooter >
+                    <Button type="submit">Submit</Button>
+                  </DialogFooter>                
+              </div>    
             </form>
           </Form>
-          </div>
-          </div>
-      </div>
+        </DialogContent>
+        
+      </Dialog>
     )
   }

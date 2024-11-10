@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import DatasetItem from "./components/DatasetItem";
+import Dataset from "./components/Dataset";
 import "./discover.scss";
 import medicalImaging from "./assets/medical_imaging.png";
 import satelliteImagery from "./assets/satellite_and_areal.png";
