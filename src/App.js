@@ -1,5 +1,10 @@
 import Discover from "./Discover";
+<<<<<<< HEAD
 import DatasetPage from "./DatasetPage"
+=======
+import Download from "./Download";
+import { useNavigate } from "react";
+>>>>>>> checkout_page
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Checkout from "./Checkout";
 import Profile from "./Profile";
@@ -24,8 +29,13 @@ function App() {
           <Route path="/view-datasets" element={<DatasetOperationPage />} />
           {/* <Route path="dataset-example" element={<DatasetPage />} /> */}
           <Route path="/dataset/:id" element={<DatasetPage />} />
+<<<<<<< HEAD
           
           
+=======
+          <Route path="/checkout/:id" element={<Checkout />} />
+          <Route path="/download/:id" element={<Download />} />
+>>>>>>> checkout_page
         </Routes>
       </Router>
       <Toaster/>

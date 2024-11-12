@@ -1,9 +1,10 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, Link, useParams } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import "./datasetpage.scss";
 
 const DatasetPage = () => {
   const location = useLocation();
+  const { id } = useParams(); // Get the id from the URL
   const { title, price, image } = location.state || {}; // fallback in case state is undefined
 
   return (
@@ -37,7 +38,20 @@ const DatasetPage = () => {
                 <p>Nexus verification fee: $20</p>
                 <p>Taxes: $3</p>
               </div>
-              <button className="order-button">Order</button>
+              <button className="order-button">
+                <Link
+                to={`/checkout/${id}`}
+                // to={`/checkout`}
+                  // key={dataset.id}
+                  // state={{
+                  //   title: dataset.title,
+                  //   price: dataset.price,
+                  //   image: dataset.image,
+                  // }}
+                >
+                  Order
+                </Link>
+              </button>
               <button className="message-button">Message Seller</button>
             </div>
           </div>

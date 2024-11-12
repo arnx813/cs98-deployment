@@ -11,6 +11,7 @@ import abstractArt from "./assets/abstract_art.png";
 import africanWildlife from "./assets/african_wildlife.png";
 import asianPeople from "./assets/asian_people.png";
 import { Satellite } from "lucide-react";
+import { info } from "sass";
 
 const Discover = () => {
   const [datasetIDs, setDatasetIDs] = useState([]);
@@ -43,6 +44,8 @@ const Discover = () => {
       try {
         // Fetch details for each dataset in parallel
         const datasetPromises = datasetIDs.map(async (id) => {
+          console.log('the id is ', id);
+
           // Fetch dataset information
           const infoResponse = await fetch(
             `http://localhost:8080/datasets/getDatasetInformation/${id}`
@@ -51,10 +54,11 @@ const Discover = () => {
             throw new Error(`Failed to fetch dataset info for ID: ${id}`);
           }
           const infoData = await infoResponse.json();
+          console.log('info data', infoData);
 
           // Fetch the preview image (using index 0 as the default)
           const imageResponse = await fetch(
-            `http://localhost:8080/datasets/getDatasetSinglePreviewImage/${id}/0`
+            `http://localhost:8080/datasets/getDatasetSinglePreviewImage/${id}`
           );
           if (!imageResponse.ok) {
             throw new Error(`Failed to fetch dataset image for ID: ${id}`);
@@ -131,6 +135,7 @@ const Discover = () => {
                 to={`/dataset/${dataset.id}`}
                 key={dataset.id}
                 state={{
+                  id: dataset.id,
                   title: dataset.title,
                   price: dataset.price,
                   image: dataset.image,

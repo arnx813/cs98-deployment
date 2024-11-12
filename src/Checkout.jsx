@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "./components/Navbar";
 // import Dataset from "./components/Dataset.jsx";
 import Dataset from "./components/Dataset";
@@ -8,8 +10,10 @@ import DatasetCard from "./components/DatasetCard";
 import ProviderCard from "./components/ProviderCard";
 import PurchaseButton from "./components/PurchaseButton";
 
+const Checkout = ({ image, description, price }) => {
+  const navigate = useNavigate();
+  const { id } = useParams(); // Get the id from the URL
 
-const Checkout = () => {
 
   return (
     <div className="checkout">
@@ -29,6 +33,20 @@ const Checkout = () => {
             <PurchaseButton payment_type={"Apple Pay"} />
             <PurchaseButton payment_type={"Credit Card"} />
           </div>
+          <button className="order-button">
+            <Link
+            // to={`/checkout/${id}`}
+            to={`/download/${id}`}
+            // key={dataset.id}
+            // state={{
+            //   title: dataset.title,
+            //   price: dataset.price,
+            //   image: dataset.image,
+            // }}
+            >
+              Order
+            </Link>
+          </button>
         </div>
         <div className="dataset-rightside">
           <DatasetCard image={satelliteImagery} />
