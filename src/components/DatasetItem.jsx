@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./dataset.scss";
+import "./datasetitem.scss";
 
-
-const Dataset = ({ image, description, price }) => {
+const DatasetItem = ({ image, description, price }) => {
   const navigate = useNavigate();
 
   const handleClick = (e) => {
@@ -24,4 +23,4 @@ const Dataset = ({ image, description, price }) => {
   );
 };
 
-export default Dataset;
+export default DatasetItem;

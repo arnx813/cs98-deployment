@@ -1,4 +1,5 @@
 import Navbar from "./components/Navbar";
+// import Dataset from "./components/Dataset.jsx";
 import Dataset from "./components/Dataset";
 import arrowForCheckout from "./assets/arrow_checkout.png";
 import satelliteImagery from "./assets/satellite_and_areal.png";
@@ -6,6 +7,7 @@ import "./checkout.scss";
 import DatasetCard from "./components/DatasetCard";
 import ProviderCard from "./components/ProviderCard";
 import PurchaseButton from "./components/PurchaseButton";
+
 
 const Checkout = () => {
 
