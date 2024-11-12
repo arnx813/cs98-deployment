@@ -2,13 +2,13 @@
  
 import React, {useState, useRef} from 'react';
 
-import { Icons } from './icons';
+import { Icons } from '../components/icons';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { useToast } from "../hooks/use-toast"
 import { Button } from "src/components/ui/button"
-import { Label } from "./ui/label"
+import { Label } from "../components/ui/label"
 import { ScrollArea } from 'src/components/ui/scroll-area'
 import {
   Dialog,
@@ -16,7 +16,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "src/components/ui/dialog"
 
@@ -26,8 +25,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from 'src/components/ui/tooltip'
-
-
 
 import {
   Form,
@@ -39,10 +36,8 @@ import {
   FormMessage,
 } from "src/components/ui/form"
 import { Input } from "src/components/ui/input"
-import { cn } from "../lib/utils"
-import { Link } from "react-router-dom"
-import { Textarea } from "./ui/textarea"
-import { Separator } from "./ui/separator"
+import { Textarea } from "../components/ui/textarea"
+import { Separator } from "../components/ui/separator"
 
 const profileFormSchema = z.object({
     datasetName: z
@@ -57,7 +52,11 @@ const profileFormSchema = z.object({
       .string({
         required_error: "Please include a description.",
       }).max(160).min(4),
-    price: z.coerce.number(),
+    price: z.coerce
+    .number({
+      message: "Please input a price",
+      required_error: "Price is required",
+    }),
       
     file: z
       .any({
@@ -81,13 +80,7 @@ const profileFormSchema = z.object({
   
   
   // This can come from your database or API.
-  const defaultValues = {
-    bio: "I own a computer.",
-    urls: [
-      { value: "https://shadcn.com" },
-      { value: "http://twitter.com/shadcn" },
-    ],
-  }
+  const defaultValues = {}
   
   export function UploadForm() {
     const form = useForm({
@@ -105,9 +98,6 @@ const profileFormSchema = z.object({
     const fileInputRef = useRef(null);
     const [open, setOpen] = useState(true)
 
-
-
-  
     const handleRemoveFile = (index) => {
       setPreviewFileNames((prevFiles) => prevFiles.filter((_, i) => i !== index));
       form.setValue(
