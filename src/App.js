@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Login from "./Login";
 import Discover from "./Discover";
+import Download from "./Download";
 import { useNavigate } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Checkout from "./Checkout";
@@ -21,6 +22,8 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           {/* <Route path="dataset-example" element={<DatasetPage />} /> */}
           <Route path="/dataset/:id" element={<DatasetPage />} />
+          <Route path="/checkout/:id" element={<Checkout />} />
+          <Route path="/download/:id" element={<Download />} />
         </Routes>
       </Router>
     </div>
