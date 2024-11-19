@@ -10,18 +10,28 @@ const Discover = () => {
   const [datasets, setDatasets] = useState([]);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  
-   // Placeholder datasets
-   const placeholderDatasets = [
-    { id: 1, title: "Placeholder Dataset 1", price: "Free", description: "This is a placeholder description for dataset 1." },
-    { id: 2, title: "Placeholder Dataset 2", price: "$10/month", description: "This is a placeholder description for dataset 2." },
-    { id: 3, title: "Placeholder Dataset 3", price: "$20/month", description: "This is a placeholder description for dataset 3." },
-    { id: 1, title: "Placeholder Dataset 1", price: "Free", description: "This is a placeholder description for dataset 1." },
-    { id: 2, title: "Placeholder Dataset 2", price: "$10/month", description: "This is a placeholder description for dataset 2." },
-    { id: 3, title: "Placeholder Dataset 3", price: "$20/month", description: "This is a placeholder description for dataset 3." },
-    { id: 1, title: "Placeholder Dataset 1", price: "Free", description: "This is a placeholder description for dataset 1." },
-    { id: 2, title: "Placeholder Dataset 2", price: "$10/month", description: "This is a placeholder description for dataset 2." },
-    { id: 3, title: "Placeholder Dataset 3", price: "$20/month", description: "This is a placeholder description for dataset 3." },
+
+  // Placeholder datasets
+  const placeholderDatasets = [
+    {
+      id: 1,
+      title: "Placeholder Dataset 1",
+      price: "Free",
+      description: "This is a placeholder description for dataset 1.",
+    },
+    {
+      id: 2,
+      title: "Placeholder Dataset 2",
+      price: "$10/month",
+      description: "This is a placeholder description for dataset 2.",
+    },
+    // { id: 3, title: "Placeholder Dataset 3", price: "$20/month", description: "This is a placeholder description for dataset 3." },
+    // { id: 1, title: "Placeholder Dataset 1", price: "Free", description: "This is a placeholder description for dataset 1." },
+    // { id: 2, title: "Placeholder Dataset 2", price: "$10/month", description: "This is a placeholder description for dataset 2." },
+    // { id: 3, title: "Placeholder Dataset 3", price: "$20/month", description: "This is a placeholder description for dataset 3." },
+    // { id: 1, title: "Placeholder Dataset 1", price: "Free", description: "This is a placeholder description for dataset 1." },
+    // { id: 2, title: "Placeholder Dataset 2", price: "$10/month", description: "This is a placeholder description for dataset 2." },
+    // { id: 3, title: "Placeholder Dataset 3", price: "$20/month", description: "This is a placeholder description for dataset 3." },
   ];
 
   useEffect(() => {
@@ -122,8 +132,8 @@ const Discover = () => {
         </div>
         <hr className="my-8 border-gray-300" />
 
-         {/* View all datasets section */}
-         <div className="my-6">
+        {/* View all datasets section */}
+        <div className="my-6">
           <p className="text-lg mb-4">View all datasets</p>
           <div className="space-y-4">
             {placeholderDatasets.map((dataset) => (
@@ -133,12 +143,13 @@ const Discover = () => {
               >
                 <p className="text-lg font-semibold">{dataset.title}</p>
                 <p className="text-sm text-gray-600">{dataset.description}</p>
-                <p className="text-sm text-gray-800 font-medium">{dataset.price}</p>
+                <p className="text-sm text-gray-800 font-medium">
+                  {dataset.price}
+                </p>
               </div>
             ))}
           </div>
         </div>
-
       </div>
     </div>
   );

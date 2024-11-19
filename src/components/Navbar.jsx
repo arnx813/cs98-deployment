@@ -6,6 +6,9 @@ import nexusLogo from "../assets/nexus_temp_logo.jpeg";
 import settingsImage from "../assets/settings.png";
 import { signOut } from "@aws-amplify/auth";
 
+import { Authenticator, withAuthenticator } from "@aws-amplify/ui-react";
+import "@aws-amplify/ui-react/styles.css";
+
 const Navbar = () => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -33,6 +36,7 @@ const Navbar = () => {
 
   return (
     <div className="navbar flex items-center justify-between p-4 text-black">
+      <Authenticator />
       <div className="logo">
         <Link to="/" className="flex items-center">
           <img src={nexusLogo} alt="Nexus Logo" className="h-8 mr-2" />
@@ -40,7 +44,10 @@ const Navbar = () => {
         </Link>
       </div>
       <div className="search-bar flex items-center">
-        <input placeholder="Search for datasets" className="search-input p-2 rounded-l-lg" />
+        <input
+          placeholder="Search for datasets"
+          className="search-input p-2 rounded-l-lg"
+        />
         <button className="search-button w-10 h-10 bg-blue-500 rounded-r-lg flex items-center justify-center text-white focus:outline-none">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -56,7 +63,7 @@ const Navbar = () => {
         <button
           onClick={navigateToUpload}
           className="bg-white text-black px-4 py-2 rounded-full hover:bg-gray-100 focus:outline-none border border-gray-300"
-          >
+        >
           Upload Dataset
         </button>
 
@@ -114,4 +121,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default withAuthenticator(Navbar);
