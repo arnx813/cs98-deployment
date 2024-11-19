@@ -247,6 +247,13 @@ const Discover = () => {
               to={`/dataset/${dataset.id}`}
               key={dataset.id}
               className="block w-full"
+              state={{
+                id: dataset.id,
+                title: dataset.title,
+                price: dataset.price,
+                image: dataset.image,
+                description: dataset.description,
+              }}
             >
               <div className="w-full border border-gray-200 rounded-lg p-4 flex items-center space-x-4 hover:bg-gray-100 transition">
                 {/* Image */}
