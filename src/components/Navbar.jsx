@@ -6,9 +6,6 @@ import nexusLogo from "../assets/nexus_temp_logo.jpeg";
 import settingsImage from "../assets/settings.png";
 import { signOut } from "@aws-amplify/auth";
 
-import { Authenticator, withAuthenticator } from "@aws-amplify/ui-react";
-import "@aws-amplify/ui-react/styles.css";
-
 const Navbar = () => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -36,7 +33,6 @@ const Navbar = () => {
 
   return (
     <div className="navbar flex items-center justify-between p-4 text-black">
-      <Authenticator />
       <div className="logo">
         <Link to="/" className="flex items-center">
           <img src={nexusLogo} alt="Nexus Logo" className="h-8 mr-2" />
@@ -121,4 +117,4 @@ const Navbar = () => {
   );
 };
 
-export default withAuthenticator(Navbar);
+export default Navbar;

@@ -7,7 +7,11 @@ import Dataset from "./components/Dataset";
 import { getCurrentUser } from "@aws-amplify/auth";
 import DatasetOperationPage from "./DatasetOperations/page";
 
-export default function Profile() {
+import { Authenticator, withAuthenticator } from "@aws-amplify/ui-react";
+import "@aws-amplify/ui-react/styles.css";
+
+// export default function Profile() {
+const Profile = () => {
   const [userEmail, setUserEmail] = useState(null);
   const [userStarredDatasetIds, setUserStarredDatasetIds] = useState([]);
   const [starredDatasetIds, setStarredDatasetIDs] = useState([]);
@@ -122,68 +126,71 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen">
-      <Navbar />
-      <div className="max-w-7xl mx-auto p-6">
-        {/* Profile Header */}
-        <div className="bg-white rounded-lg border p-6 flex items-center">
-          <img
-            src={janeDoe}
-            alt="Profile"
-            className="w-24 h-24 rounded-full mr-6"
-          />
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800">Aaron Xie</h1>
-            <p className="text-gray-600">
-              {userEmail || "jane.doe@example.com"}
-            </p>
-            {/* <button
+      <Authenticator>
+        <Navbar />
+        <div className="max-w-7xl mx-auto p-6">
+          {/* Profile Header */}
+          <div className="bg-white rounded-lg border p-6 flex items-center">
+            <img
+              src={janeDoe}
+              alt="Profile"
+              className="w-24 h-24 rounded-full mr-6"
+            />
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800">Aaron Xie</h1>
+              <p className="text-gray-600">
+                {userEmail || "jane.doe@example.com"}
+              </p>
+              {/* <button
               onClick={() => navigate("/edit-profile")}
               className="mt-4 px-4 py-2  text-gray border rounded hover:bg-gray-200"
             >
               Edit Profile
             </button> */}
+            </div>
           </div>
-        </div>
 
-        {/* Starred Datasets */}
-        <div className="mt-10">
-          <h2 className="text-xl font-semibold text-gray-800">
-            Starred Datasets
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {starredDatasets.map((dataset) => (
-          <Link
-            to={`/dataset/${dataset.id}`}
-            key={dataset.id}
-            state={{
-              id: dataset.id,
-              title: dataset.title,
-              price: dataset.price,
-              image: dataset.image,
-              description: dataset.description,
-            }}
-          >
-            <Dataset
-              image={dataset.image}
-              description={dataset.title}
-              price={`$${dataset.price} per month`}
-            />
-          </Link>
-        ))}
-            
+          {/* Starred Datasets */}
+          <div className="mt-10">
+            <h2 className="text-xl font-semibold text-gray-800">
+              Starred Datasets
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+              {starredDatasets.map((dataset) => (
+                <Link
+                  to={`/dataset/${dataset.id}`}
+                  key={dataset.id}
+                  state={{
+                    id: dataset.id,
+                    title: dataset.title,
+                    price: dataset.price,
+                    image: dataset.image,
+                    description: dataset.description,
+                  }}
+                >
+                  <Dataset
+                    image={dataset.image}
+                    description={dataset.title}
+                    price={`$${dataset.price} per month`}
+                  />
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* User's Uploaded Datasets */}
-        <div className="mt-10">
-          <h2 className="text-  xl font-semibold text-gray-800">
-            Your Datasets
-          </h2>
+          {/* User's Uploaded Datasets */}
+          <div className="mt-10">
+            <h2 className="text-  xl font-semibold text-gray-800">
+              Your Datasets
+            </h2>
 
-          <DatasetOperationPage />
+            <DatasetOperationPage />
+          </div>
+          <div className="mt-10"></div>
         </div>
-        <div className="mt-10"></div>
-      </div>
+      </Authenticator>
     </div>
   );
-}
+};
+
+export default withAuthenticator(Profile);

@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Dataset from "./components/Dataset";
-import { Authenticator, withAuthenticator } from "@aws-amplify/ui-react";
-import "@aws-amplify/ui-react/styles.css";
+// import { Authenticator, withAuthenticator } from "@aws-amplify/ui-react";
+// import "@aws-amplify/ui-react/styles.css";
 
 const Discover = () => {
   const [datasetIDs, setDatasetIDs] = useState([]);
@@ -208,7 +208,6 @@ const Discover = () => {
 
   return (
     <div className="p-4">
-      <Authenticator />
       <Navbar />
       <div className="text-center my-6">
         <p className="text-4xl">Explore our starter kit</p>
@@ -277,4 +276,4 @@ const Discover = () => {
   );
 };
 
-export default withAuthenticator(Discover);
+export default Discover;

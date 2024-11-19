@@ -7,10 +7,9 @@ import "@aws-amplify/ui-react/styles.css";
 import { UploadForm } from "./DatasetOperations/Upload-Form";
 
 const Upload = () => {
-
   return (
     <div>
-        <Navbar />
+      <Navbar />
       <UploadForm />
     </div>
   );
