@@ -21,12 +21,17 @@
     flex-direction: row;
     align-items: center;
 
+    .search-input {
+      border-radius: 15px;
+      padding: 20px;
+    }
+
     .search-button {
       position: absolute;
       right: 5px;
       top: 50%;
       transform: translateY(-50%);
-      background-color: purple;
+      background-color: #642DFF;
       color: white;
       border: none;
       border-radius: 12px;

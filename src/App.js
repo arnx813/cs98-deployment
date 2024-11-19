@@ -1,10 +1,11 @@
+import React from "react";
+import { useState } from "react";
+import Login from "./Login";
 import Discover from "./Discover";
-<<<<<<< HEAD
 import DatasetPage from "./DatasetPage"
-=======
 import Download from "./Download";
+import Upload from "./Upload"
 import { useNavigate } from "react";
->>>>>>> checkout_page
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Checkout from "./Checkout";
 import Profile from "./Profile";
@@ -14,28 +15,33 @@ import { UploadForm } from "./DatasetOperations/Upload-Form";
 import { Toaster } from "./components/ui/toaster";
 import DatasetOperationPage from "./DatasetOperations/page";
 
+// Amplify stuff
+import { Amplify } from "aws-amplify";
+// import config from "./amplifyconfiguration.json";
+import config from "./aws-exports";
+Amplify.configure(config);
+
 function App() {
   return (
     <div className="App">
       <Router>
         <Routes>
-          <Route path="/" element={<SignupForm />} />
-          <Route path="/login" element={<LoginAuth />} />
-          <Route path="/discover" element={<Discover />} />
+          {/* <Route path="/" element={<SignupForm />} /> */}
+          <Route path="/" element={<Discover />} />
+          {/* <Route path="/login" element={<LoginAuth />} /> */}
+          <Route path="/login" element={<Login />} />
+          {/* <Route path="/discover" element={<Discover />} /> */}
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/dataset-example" element={<DatasetPage />} />
-          <Route path="/upload" element={<UploadForm />} />
+          <Route path="/upload" element={<Upload/>} />
           <Route path="/view-datasets" element={<DatasetOperationPage />} />
           {/* <Route path="dataset-example" element={<DatasetPage />} /> */}
           <Route path="/dataset/:id" element={<DatasetPage />} />
-<<<<<<< HEAD
           
           
-=======
           <Route path="/checkout/:id" element={<Checkout />} />
           <Route path="/download/:id" element={<Download />} />
->>>>>>> checkout_page
         </Routes>
       </Router>
       <Toaster/>

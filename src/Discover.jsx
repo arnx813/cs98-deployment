@@ -1,23 +1,28 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import DatasetItem from "./components/DatasetItem";
 import Dataset from "./components/Dataset";
-import "./discover.scss";
-import medicalImaging from "./assets/medical_imaging.png";
-import satelliteImagery from "./assets/satellite_and_areal.png";
-import autonomousDriving from "./assets/autonomous_driving.png";
-import abstractArt from "./assets/abstract_art.png";
-import africanWildlife from "./assets/african_wildlife.png";
-import asianPeople from "./assets/asian_people.png";
-import { Satellite } from "lucide-react";
-import { info } from "sass";
+import { Authenticator, withAuthenticator } from "@aws-amplify/ui-react";
+import "@aws-amplify/ui-react/styles.css";
 
 const Discover = () => {
   const [datasetIDs, setDatasetIDs] = useState([]);
   const [datasets, setDatasets] = useState([]);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  
+   // Placeholder datasets
+   const placeholderDatasets = [
+    { id: 1, title: "Placeholder Dataset 1", price: "Free", description: "This is a placeholder description for dataset 1." },
+    { id: 2, title: "Placeholder Dataset 2", price: "$10/month", description: "This is a placeholder description for dataset 2." },
+    { id: 3, title: "Placeholder Dataset 3", price: "$20/month", description: "This is a placeholder description for dataset 3." },
+    { id: 1, title: "Placeholder Dataset 1", price: "Free", description: "This is a placeholder description for dataset 1." },
+    { id: 2, title: "Placeholder Dataset 2", price: "$10/month", description: "This is a placeholder description for dataset 2." },
+    { id: 3, title: "Placeholder Dataset 3", price: "$20/month", description: "This is a placeholder description for dataset 3." },
+    { id: 1, title: "Placeholder Dataset 1", price: "Free", description: "This is a placeholder description for dataset 1." },
+    { id: 2, title: "Placeholder Dataset 2", price: "$10/month", description: "This is a placeholder description for dataset 2." },
+    { id: 3, title: "Placeholder Dataset 3", price: "$20/month", description: "This is a placeholder description for dataset 3." },
+  ];
 
   useEffect(() => {
     const fetchDatasetIDs = async () => {
@@ -42,11 +47,9 @@ const Discover = () => {
   useEffect(() => {
     const fetchDatasetDetails = async () => {
       try {
-        // Fetch details for each dataset in parallel
         const datasetPromises = datasetIDs.map(async (id) => {
-          console.log('the id is ', id);
+          console.log("the id is ", id);
 
-          // Fetch dataset information
           const infoResponse = await fetch(
             `http://localhost:8080/datasets/getDatasetInformation/${id}`
           );
@@ -54,9 +57,8 @@ const Discover = () => {
             throw new Error(`Failed to fetch dataset info for ID: ${id}`);
           }
           const infoData = await infoResponse.json();
-          console.log('info data', infoData);
+          console.log("info data", infoData);
 
-          // Fetch the preview image (using index 0 as the default)
           const imageResponse = await fetch(
             `http://localhost:8080/datasets/getDatasetSinglePreviewImage/${id}`
           );
@@ -71,10 +73,10 @@ const Discover = () => {
             title: infoData.name,
             price: infoData.price,
             image: imageURL,
+            description: infoData.description,
           };
         });
 
-        // Resolve all promises and update the datasets state
         const fetchedDatasets = await Promise.all(datasetPromises);
         setDatasets(fetchedDatasets);
         console.log(fetchedDatasets);
@@ -88,90 +90,58 @@ const Discover = () => {
     }
   }, [datasetIDs]);
 
-  const firstRow = datasets.slice(0, 3);
-  const secondRow = datasets.slice(3, 6);
-
-  //   return (
-  //     <div className="discover">
-  //       <Navbar />
-  //       <div className="main">
-  //         <p className="header">Explore our starter kit</p>
-  //         <div className="pictures">
-  //           <div className="row-of-pictures">
-  //             {firstRow.map((dataset) => (
-  //               <Dataset
-  //                 key={dataset.id}
-  //                 image={dataset.image}
-  //                 description={dataset.title}
-  //                 price={`$${dataset.price} per month`}
-  //               />
-  //             ))}
-  //           </div>
-  //           <div className="row-of-pictures">
-  //             {secondRow.map((dataset) => (
-  //               <Dataset
-  //                 key={dataset.id}
-  //                 image={dataset.image}
-  //                 description={dataset.title}
-  //                 price={`$${dataset.price} per month`}
-  //               />
-  //             ))}
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // };
-
   return (
-    <div className="discover">
+    <div className="p-4">
+      <Authenticator />
       <Navbar />
-      <div className="main">
-        <p className="header">Explore our starter kit</p>
-        <div className="pictures">
-          <div className="row-of-pictures">
-            {firstRow.map((dataset) => (
-              <Link
-                to={`/dataset/${dataset.id}`}
+      <div className="text-center my-6">
+        <p className="text-4xl">Explore our starter kit</p>
+      </div>
+      <div className="max-w-screen-3xl mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {datasets.map((dataset) => (
+            <Link
+              to={`/dataset/${dataset.id}`}
+              key={dataset.id}
+              state={{
+                id: dataset.id,
+                title: dataset.title,
+                price: dataset.price,
+                image: dataset.image,
+                description: dataset.description,
+              }}
+              className="block"
+            >
+              <Dataset
+                image={dataset.image}
+                description={dataset.title}
+                price={`$${dataset.price} per month`}
+              />
+            </Link>
+          ))}
+        </div>
+        <hr className="my-8 border-gray-300" />
+
+         {/* View all datasets section */}
+         <div className="my-6">
+          <p className="text-lg mb-4">View all datasets</p>
+          <div className="space-y-4">
+            {placeholderDatasets.map((dataset) => (
+              <div
                 key={dataset.id}
-                state={{
-                  id: dataset.id,
-                  title: dataset.title,
-                  price: dataset.price,
-                  image: dataset.image,
-                }}
+                className="w-full border border-gray-200 rounded-lg p-4"
               >
-                <Dataset
-                  image={dataset.image}
-                  description={dataset.title}
-                  price={`$${dataset.price} per month`}
-                />
-              </Link>
-            ))}
-          </div>
-          <div className="row-of-pictures">
-            {secondRow.map((dataset) => (
-              <Link
-                to={`/dataset/${dataset.id}`}
-                key={dataset.id}
-                state={{
-                  title: dataset.title,
-                  price: dataset.price,
-                  image: dataset.image,
-                }}
-              >
-                <Dataset
-                  image={dataset.image}
-                  description={dataset.title}
-                  price={`$${dataset.price} per month`}
-                />
-              </Link>
+                <p className="text-lg font-semibold">{dataset.title}</p>
+                <p className="text-sm text-gray-600">{dataset.description}</p>
+                <p className="text-sm text-gray-800 font-medium">{dataset.price}</p>
+              </div>
             ))}
           </div>
         </div>
+
       </div>
     </div>
   );
 };
 
-export default Discover;
+export default withAuthenticator(Discover);
