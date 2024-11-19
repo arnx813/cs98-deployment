@@ -77,7 +77,7 @@ const Discover = () => {
     const fetchDatasetIDs = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/datasets/getDatasetIDs/6"
+          "http://localhost:8080/datasets/getRandomDatasetIDs/6"
         );
         if (!response.ok) {
           throw new Error("Failed to fetch dataset IDs");
@@ -246,6 +246,13 @@ const Discover = () => {
                 to={`/dataset/${dataset.id}`}
                 key={dataset.id}
                 className="block w-full"
+                state={{
+                  id: dataset.id,
+                  title: dataset.title,
+                  price: dataset.price,
+                  image: dataset.image,
+                  description: dataset.description,
+                }}
               >
                 <div className="w-full border border-gray-200 rounded-lg p-4 flex items-center space-x-4 hover:bg-gray-100 transition">
                   {/* Image */}

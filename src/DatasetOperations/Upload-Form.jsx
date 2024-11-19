@@ -374,8 +374,8 @@ export function UploadForm() {
                 )}
               />
             </div>
+            <Button type="submit">Submit</Button>
           </ScrollArea>
-          <Button type="submit">Submit</Button>
         </div>
       </form>
     </Form>
