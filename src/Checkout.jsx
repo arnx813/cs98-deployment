@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import satelliteImagery from "./assets/satellite_and_areal.png";
@@ -8,6 +8,8 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { id } = useParams(); // Get the id from the URL
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+  const [datasetPreviewImage, setDatasetPreviewImage] = useState(null);
+  const [error, setError] = useState("");
 
   const paymentMethods = [
     {
@@ -36,6 +38,27 @@ const Checkout = () => {
     navigate(`/download/${id}`);
   };
 
+  useEffect(() => {
+    const fetchDatasetPreviewImage = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/datasets/getDatasetSinglePreviewImage/${id}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch dataset IDs");
+        }
+        const dataBlob = await response.blob();
+        const imageURL = URL.createObjectURL(dataBlob);
+        console.log("Fetched dataset preview:", dataBlob);
+        setDatasetPreviewImage(imageURL);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    fetchDatasetPreviewImage();
+  }, []);
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -54,11 +77,11 @@ const Checkout = () => {
               </p>
               <div className="w-full">
                 <img
-                  src={satelliteImagery}
+                  src={datasetPreviewImage}
                   alt="Dataset"
                   className="w-full h-auto rounded-lg mr-4 my-5 "
-                  />
-                  {/* <ProviderCard /> */}
+                />
+                {/* <ProviderCard /> */}
               </div>
             </div>
 
@@ -86,11 +109,11 @@ const Checkout = () => {
                       onChange={() => handlePaymentMethodSelect(method.id)}
                       className="form-radio h-5 w-5 text-blue-600"
                     />
-                    <img
+                    {/* <img
                       src={method.icon}
                       alt={method.name}
                       className="w-8 h-8 ml-4"
-                    />
+                    /> */}
                     <span className="ml-4 text-gray-800">{method.name}</span>
                   </div>
                 ))}
