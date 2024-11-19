@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import satelliteImagery from "./assets/satellite_and_areal.png";
 import ProviderCard from "./components/ProviderCard";
 
 const Checkout = () => {
   const navigate = useNavigate();
+
   const { id } = useParams(); // Get the id from the URL
+  const [dataset, setDataset] = useState({});
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [datasetPreviewImage, setDatasetPreviewImage] = useState(null);
   const [error, setError] = useState("");
@@ -39,6 +41,22 @@ const Checkout = () => {
   };
 
   useEffect(() => {
+    const fetchDatasetName = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/datasets/getDatasetInformation/${id}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch dataset information");
+        }
+        const data = await response.json();
+        console.log("Fetched dataset information:", data);
+        setDataset(data);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
     const fetchDatasetPreviewImage = async () => {
       try {
         const response = await fetch(
@@ -56,8 +74,9 @@ const Checkout = () => {
       }
     };
 
+    fetchDatasetName();
     fetchDatasetPreviewImage();
-  }, []);
+  }, [id]);
 
   return (
     <div className="min-h-screen">
@@ -73,7 +92,7 @@ const Checkout = () => {
             {/* Dataset Details */}
             <div className="bg-white rounded-lg border px-6 mb-6">
               <p className="text-gray-800 font-regular">
-                Your Dataset: Satellite & Aerial Imagery
+                Your Dataset: {dataset.name || "Loading..."}
               </p>
               <div className="w-full">
                 <img
@@ -109,11 +128,6 @@ const Checkout = () => {
                       onChange={() => handlePaymentMethodSelect(method.id)}
                       className="form-radio h-5 w-5 text-blue-600"
                     />
-                    {/* <img
-                      src={method.icon}
-                      alt={method.name}
-                      className="w-8 h-8 ml-4"
-                    /> */}
                     <span className="ml-4 text-gray-800">{method.name}</span>
                   </div>
                 ))}
