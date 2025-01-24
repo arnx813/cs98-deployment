@@ -77,7 +77,7 @@ const Discover = () => {
     const fetchDatasetIDs = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/datasets/getRandomDatasetIDs/6"
+          "http://localhost:8080/api/public/datasets/getRandomDatasetIDs/6"
         );
         if (!response.ok) {
           throw new Error("Failed to fetch dataset IDs");
@@ -97,7 +97,7 @@ const Discover = () => {
     const fetchAllDatasetIDs = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/datasets/getAllDatasetIDs"
+          "http://localhost:8080/api/public/datasets/getAllDatasetIDs"
         );
         if (!response.ok) {
           throw new Error("Failed to fetch all dataset IDs");
@@ -120,7 +120,7 @@ const Discover = () => {
         const datasetPromises = datasetIDs.map(async (id) => {
           // Fetch dataset information
           const infoResponse = await fetch(
-            `http://localhost:8080/datasets/getDatasetInformation/${id}`
+            `http://localhost:8080/api/public/datasets/getDatasetInformation/${id}`
           );
           if (!infoResponse.ok) {
             throw new Error(`Failed to fetch dataset info for ID: ${id}`);
@@ -129,7 +129,7 @@ const Discover = () => {
 
           // Fetch the preview image (using index 0 as the default)
           const imageResponse = await fetch(
-            `http://localhost:8080/datasets/getDatasetSinglePreviewImage/${id}`
+            `http://localhost:8080/api/public/datasets/getDatasetSinglePreviewImage/${id}`
           );
           if (!imageResponse.ok) {
             throw new Error(`Failed to fetch dataset image for ID: ${id}`);
@@ -167,7 +167,7 @@ const Discover = () => {
           console.log("the id is ", id);
 
           const infoResponse = await fetch(
-            `http://localhost:8080/datasets/getDatasetInformation/${id}`
+            `http://localhost:8080/api/public/datasets/getDatasetInformation/${id}`
           );
           if (!infoResponse.ok) {
             throw new Error(`Failed to fetch dataset info for ID: ${id}`);
@@ -176,7 +176,7 @@ const Discover = () => {
           console.log("info data", infoData);
 
           const imageResponse = await fetch(
-            `http://localhost:8080/datasets/getDatasetSinglePreviewImage/${id}`
+            `http://localhost:8080/api/public/datasets/getDatasetSinglePreviewImage/${id}`
           );
           if (!imageResponse.ok) {
             throw new Error(`Failed to fetch dataset image for ID: ${id}`);
