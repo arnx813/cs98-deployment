@@ -14,6 +14,7 @@ import { LoginAuth } from "./Authentication/login-auth";
 import { UploadForm } from "./DatasetOperations/Upload-Form";
 import { Toaster } from "./components/ui/toaster";
 import DatasetOperationPage from "./DatasetOperations/page";
+import SellerForm from "./seller-form";
 
 // Amplify stuff
 import { Amplify } from "aws-amplify";
@@ -39,7 +40,7 @@ function App() {
           {/* <Route path="dataset-example" element={<DatasetPage />} /> */}
           <Route path="/dataset/:id" element={<DatasetPage />} />
           
-          
+          <Route path="seller-form" element={<SellerForm />} />
           <Route path="/checkout/:id" element={<Checkout />} />
           <Route path="/download/:id" element={<Download />} />
         </Routes>
