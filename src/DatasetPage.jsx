@@ -372,6 +372,8 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import { getCurrentUser } from "aws-amplify/auth";
+import Forum from "./forum";
+import { Separator } from "@radix-ui/react-dropdown-menu";
 
 const DatasetPage = () => {
   const navigate = useNavigate();
@@ -551,6 +553,8 @@ const DatasetPage = () => {
             </div>
           </div>
         </div>
+        <hr className="border-gray-300 mb-4" />
+        <Forum/>
       </div>
     </div>
   );

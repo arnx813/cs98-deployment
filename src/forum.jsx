@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { ChevronUp, MessageSquare, ChevronDown, X } from 'lucide-react';
+import { ChevronUp, MessageSquare, ChevronDown, X, Plus, Minus } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
+
+
 const Comment = ({ 
   comment, 
   onReply, 
@@ -40,7 +42,7 @@ const Comment = ({
         <div className="flex-1  rounded px-1"> { /* Border of each comments/replies */}
           <div className="flex justify-between items-start gap-1">
             <div>
-              <p className="text-sm text-gray-900 leading-tight">{comment.text}</p>
+              <span className="text-xs text-gray-900 leading-tight">{comment.text}</span>
               <div className="flex items-center gap-2  ">
                 <span className="text-xs text-gray-500">
                   {comment.author} · {comment.timeAgo}
@@ -67,12 +69,12 @@ const Comment = ({
 
       {isReplying && (
         <div className="flex items-center gap-1 ml-6 mt-0.5">
-          <div className="flex-1 flex items-center bg-white border rounded overflow-hidden h-8">
+          <div className="flex-1 items-center h-8">
           <div className="flex gap-1">
             <input
               type="text"
               onChange={(e) => setReplyText(e.target.value)}
-              placeholder="Add a comment..."
+              placeholder="comment..."
               className="flex-1 px-4 h-8 border rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
@@ -94,7 +96,7 @@ const Comment = ({
               className="px-2 h-8 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
             >
               Reply
-            </button>
+          </button>
           <button
             onClick={() => setActiveReplyId(null)}
             className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 bg-gray-100 rounded"
@@ -149,7 +151,7 @@ const CommentSection = ({ postId, comments, onAddComment }) => {
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Add a comment..."
-              className="flex-1 px-1 h-8 border rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="flex-1 px-4 h-8 border rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
             <button
               type="submit"
@@ -202,8 +204,23 @@ const ForumPost = ({ post, onVote, onAddComment }) => {
   
           <div className="flex-1 ">
             <h2 className="text-base font-medium text-gray-900">{post.title}</h2>
-            <div className="text-xs text-gray-500 ">
+            <div className="flex text-xs text-gray-500 ">
               by {post.author} · {post.timeAgo} ·{' '}
+              <div className="flex items-center gap-2 inline-flex  ">
+                {post.comments.length === 0 ? (
+                      <div className="text-xs text-gray-500  ">
+       
+                          No comments yet - be the first to comment!
+                      </div>
+                      
+                  ) : (
+                      <div>
+                          {post.comments.length} {post.comments.length === 1 ? 'comment' : 'comments'}
+                      </div>
+                  )}
+
+              </div>
+              
               <button
                 onClick={() => {
                   if (!isCommentsVisible) {
@@ -213,26 +230,12 @@ const ForumPost = ({ post, onVote, onAddComment }) => {
                     setIsMinimized(!isMinimized);
                   }
                 }}
-                className="hover:text-gray-700 flex items-center gap-1 inline-flex hover:bg-gray-100 rounded"
+                className="rounded bg-blue-500 hover:bg-blue-600 flex items-center gap-4 inline-flex rounded mx-4"
               >
-                {post.comments.length === 0 ? (
-                    <div className="text-xs text-gray-500  ">
-                        {/* <Button>
-                            
-                        </Button> */}
-                        {/* <MessageSquare size={12} /> */}
-                        No comments yet - be the first to comment!
-                    </div>
-                    
-                ) : (
-                    <div>
-                        {post.comments.length} {post.comments.length === 1 ? 'comment' : 'comments'}
-                    </div>
-                )}
-                {/* {post.comments.length} {post.comments.length === 1 ? 'comment' : 'comments'} */}
+                
                 {isCommentsVisible && (
-                  <span className="text-gray-400 ">
-                    {isMinimized ? <ChevronDown size={15} /> : <ChevronUp size={15} />}
+                  <span className="flex text-white  ">
+                    {isMinimized ? <Plus size={15} className='' /> : <Minus size={15} />}
                   </span>
                 )}
               </button>
@@ -333,7 +336,7 @@ const Forum = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
+    <div className="">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Forum</h1>
         <button

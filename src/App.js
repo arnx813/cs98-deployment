@@ -15,7 +15,6 @@ import { UploadForm } from "./DatasetOperations/Upload-Form";
 import { Toaster } from "./components/ui/toaster";
 import DatasetOperationPage from "./DatasetOperations/page";
 import SellerForm from "./seller-form";
-import Forum from "./forum";
 
 // Amplify stuff
 import { Amplify } from "aws-amplify";
@@ -40,7 +39,6 @@ function App() {
           <Route path="/view-datasets" element={<DatasetOperationPage />} />
           {/* <Route path="dataset-example" element={<DatasetPage />} /> */}
           <Route path="/dataset/:id" element={<DatasetPage />} />
-          <Route path="/forum" element={<Forum/>} />
           <Route path="seller-form" element={<SellerForm />} />
           <Route path="/checkout/:id" element={<Checkout />} />
           <Route path="/download/:id" element={<Download />} />
