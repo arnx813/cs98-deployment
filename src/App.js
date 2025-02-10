@@ -5,6 +5,7 @@ import Discover from "./Discover";
 import DatasetPage from "./DatasetPage"
 import Download from "./Download";
 import Upload from "./Upload"
+import Footer from "./components/Footer";
 import { useNavigate } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Checkout from "./Checkout";
@@ -43,8 +44,10 @@ function App() {
           <Route path="/checkout/:id" element={<Checkout />} />
           <Route path="/download/:id" element={<Download />} />
         </Routes>
+        <Toaster/>
+        <Footer />
       </Router>
-      <Toaster/>
+   
     </div>
   );
 }

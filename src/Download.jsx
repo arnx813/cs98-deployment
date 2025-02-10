@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import { fetchAuthSession } from "@aws-amplify/auth";
 
 const Download = () => {
   const { id } = useParams(); // Get the id from the URL
@@ -12,9 +13,22 @@ const Download = () => {
       setIsDownloading(true);
       console.log("The ID is", id);
 
+      // Fetch authentication session
+    const session = await fetchAuthSession();
+    const sessionId = session.tokens.idToken.toString();
+    console.log("Session ID:", sessionId);
+
+    const headers = {
+      Authorization: "Bearer " + sessionId,
+    };
+
       // Fetch the dataset as a Blob
       const response = await fetch(
-        `http://localhost:8080/datasets/downloadDataset/${id}`
+        `http://localhost:8080/api/secure/datasets/downloadDataset/${id}`,
+        {
+          method: "GET",
+          headers: headers,
+        }
       );
 
       if (!response.ok) {

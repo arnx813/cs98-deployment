@@ -33,18 +33,18 @@ const Navbar = () => {
 
   return (
     <div className="navbar flex items-center justify-between p-4 text-black">
-      <div className="logo">
+      <div className="logo hover:scale-105 hover:text-blue-500 transition-all duration-300">
         <Link to="/" className="flex items-center">
           <img src={nexusLogo} alt="Nexus Logo" className="h-8 mr-2" />
           <p className="text-lg font-semibold">Nexus</p>
         </Link>
       </div>
-      <div className="search-bar flex items-center">
+      <div className="search-bar flex items-center ">
         <input
           placeholder="Search for datasets"
-          className="search-input p-2 rounded-l-lg"
+          className="search-input p-2 rounded-l-lg hover:bg-gray-100 p-2 rounded-lg transition-all duration-200"
         />
-        <button className="search-button w-10 h-10 bg-blue-500 rounded-r-lg flex items-center justify-center text-white focus:outline-none">
+        <button className="search-button w-10 h-10 bg-blue-500 rounded-r-lg flex items-center justify-center text-white focus:outline-none hover:bg-blue-600 hover:scale-105 hover:opacity-90 transition-all duration-200">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
@@ -58,7 +58,7 @@ const Navbar = () => {
       <div className="flex items-center space-x-4">
         <button
           onClick={navigateToUpload}
-          className="bg-white text-black px-4 py-2 rounded-full hover:bg-gray-100 focus:outline-none border border-gray-300"
+          className="search-button py-2 rounded-full hover:bg-gray-100 focus:outline-none border border-gray-300 transition-all duration-500"
         >
           Upload Dataset
         </button>

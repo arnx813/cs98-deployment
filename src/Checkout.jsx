@@ -44,7 +44,7 @@ const Checkout = () => {
     const fetchDatasetName = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/datasets/getDatasetInformation/${id}`
+          `http://localhost:8080/api/public/datasets/getDatasetInformation/${id}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch dataset information");
@@ -60,7 +60,7 @@ const Checkout = () => {
     const fetchDatasetPreviewImage = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/datasets/getDatasetSinglePreviewImage/${id}`
+          `http://localhost:8080/api/public/datasets/getDatasetSinglePreviewImage/${id}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch dataset IDs");
