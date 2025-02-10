@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "src/components/ui/dialog";
+import { fetchAuthSession } from "aws-amplify/auth";
 
 import {
   Tooltip,
@@ -77,6 +78,8 @@ const profileFormSchema = z.object({
 const defaultValues = {};
 
 export function UploadForm() {
+  const [sessionId, setSessionId] = useState("");
+
   const form = useForm({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
@@ -114,11 +117,22 @@ export function UploadForm() {
       });
       formData.append("tags", tags);
 
+      const session = await fetchAuthSession();
+      const sessionId2 = session.tokens.idToken.toString();
+      setSessionId(sessionId2);
+
+      console.log("session", session);
+
+      const headers = {
+        Authorization: "Bearer " + sessionId2,
+      };
+
       // Send the request using fetch or axios
       const response = await fetch(
-        "http://localhost:8080/datasets/uploadDataset",
+        "http://localhost:8080/api/secure/datasets/uploadDataset",
         {
           method: "POST",
+          headers: headers,
           body: formData, // Ensure `FormData` is sent as the body
         }
       );

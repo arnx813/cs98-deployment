@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
-// import { Navbar } from "./components/Navbar";
 import janeDoe from "src/assets/jane_doe.png";
 import Dataset from "./components/Dataset";
 import { getCurrentUser } from "@aws-amplify/auth";
 import DatasetOperationPage from "./DatasetOperations/page";
-
+import { fetchAuthSession } from "@aws-amplify/auth";
 import { Authenticator, withAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 
-// export default function Profile() {
 const Profile = () => {
   const [userEmail, setUserEmail] = useState(null);
   const [userStarredDatasetIds, setUserStarredDatasetIds] = useState([]);
   const [starredDatasetIds, setStarredDatasetIDs] = useState([]);
+  const [sessionId, setSessionId] = useState("");
   const [error, setError] = useState("");
   const [starredDatasets, setStarredDatasets] = useState([]);
   const navigate = useNavigate();
@@ -32,32 +31,49 @@ const Profile = () => {
 
     const fetchUserStarredDatasetIds = async () => {
       try {
-        // Placeholder for fetching starred dataset IDs
         setUserStarredDatasetIds([1, 2, 3]); // Example dataset IDs
       } catch (error) {
-        console.error(
-          "Could not fetch starred dataset IDs for this user:",
-          error
-        );
+        console.error("Could not fetch starred dataset IDs for this user:", error);
       }
     };
 
+    const fetchSessionDetails = async () => {
+      try {
+        const session = await fetchAuthSession();
+        const sessionId2 = session.tokens.idToken.toString();
+        setSessionId(sessionId2);
+        console.log("session", session);
+
+        const headers = {
+          Authorization: "Bearer " + sessionId2,
+        };
+
+        console.log("LOOK HERE IDIOT: " + headers.Authorization);
+
+        fetch("http://localhost:8080/api/secure/user-info", {
+          method: "GET",
+          headers: headers,
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.text();
+          })
+          .then((data) => {
+            console.log("User Info:", data);
+          })
+          .catch((error) => {
+            console.error("Error fetching user info:", error);
+          });
+      } catch (error) {
+        console.error("Error fetching session ID:", error);
+      }
+    };
+
+    fetchSessionDetails();
     fetchUserEmail();
     fetchUserStarredDatasetIds();
-  }, []);
-
-  useEffect(() => {
-    const fetchUserEmail = async () => {
-      try {
-        const user = await getCurrentUser();
-        setUserEmail(user.signInDetails.loginId);
-        console.log(user.signInDetails.loginId);
-      } catch (error) {
-        console.error("Error fetching user ID:", error);
-      }
-    };
-
-    fetchUserEmail();
   }, []);
 
   useEffect(() => {
@@ -79,7 +95,7 @@ const Profile = () => {
     };
 
     fetchStarredDatasetIDs();
-  }, []); // Empty dependency array to run only once on mount
+  }, []);
 
   useEffect(() => {
     const fetchStarredDatasetDetails = async () => {
@@ -129,7 +145,6 @@ const Profile = () => {
       <Authenticator>
         <Navbar />
         <div className="max-w-7xl mx-auto p-6">
-          {/* Profile Header */}
           <div className="bg-white rounded-lg border p-6 flex items-center">
             <img
               src={janeDoe}
@@ -138,19 +153,10 @@ const Profile = () => {
             />
             <div>
               <h1 className="text-3xl font-bold text-gray-800">Aaron Xie</h1>
-              <p className="text-gray-600">
-                {userEmail || "jane.doe@example.com"}
-              </p>
-              {/* <button
-              onClick={() => navigate("/edit-profile")}
-              className="mt-4 px-4 py-2  text-gray border rounded hover:bg-gray-200"
-            >
-              Edit Profile
-            </button> */}
+              <p className="text-gray-600">{userEmail || "jane.doe@example.com"}</p>
             </div>
           </div>
 
-          {/* Starred Datasets */}
           <div className="mt-10">
             <h2 className="text-xl font-semibold text-gray-800">
               Starred Datasets
@@ -178,15 +184,12 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* User's Uploaded Datasets */}
           <div className="mt-10">
-            <h2 className="text-  xl font-semibold text-gray-800">
+            <h2 className="text-xl font-semibold text-gray-800">
               Your Datasets
             </h2>
-
             <DatasetOperationPage />
           </div>
-          <div className="mt-10"></div>
         </div>
       </Authenticator>
     </div>
