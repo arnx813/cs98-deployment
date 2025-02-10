@@ -7,6 +7,8 @@ import Navbar from "./components/Navbar";
 // import placeholderImage3 from "./assets/placeholder3.jpg";
 import { Amplify } from "aws-amplify";
 import { getCurrentUser } from "aws-amplify/auth";
+import Forum from "./forum";
+import { Separator } from "@radix-ui/react-dropdown-menu";
 
 const DatasetPage = () => {
   const navigate = useNavigate();
@@ -148,6 +150,8 @@ const DatasetPage = () => {
             </div>
           </div>
         </div>
+        <hr className="border-gray-300 mb-4" />
+        <Forum/>
       </div>
     </div>
   );
