@@ -1,121 +1,127 @@
-import React, { useState } from 'react';
-import { ChevronUp, MessageSquare, ChevronDown, X, Plus, Minus } from 'lucide-react';
-import { Button } from './components/ui/button';
-import { Input } from './components/ui/input';
+import React, { useState, useEffect } from 'react';
+import { ChevronUp, ChevronDown, X } from 'lucide-react';
+import { fetchAuthSession } from "aws-amplify/auth";
 
+const Response = ({ response, datasetId, onDelete }) => {
+  return (
+    <div className="ml-8 border-l border-gray-200 pl-4 my-2">
+      <div className="flex justify-between items-start">
+        <div>
+          <span className="text-xs text-gray-900">{response.content}</span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-500">
+              {response.username} · {new Date(response.timestamp).toLocaleString()}
+            </span>
+            {response.canDelete && (
+              <button
+                onClick={() => onDelete(datasetId, response.forumId)}
+                className="text-xs text-red-500 hover:text-red-600"
+              >
+                Delete
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-1">
+          <span className="text-xs text-gray-600">{response.upvotes}</span>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-const Comment = ({ 
-  comment, 
-  onReply, 
-  depth = 0, 
-  activeReplyId, 
-  setActiveReplyId 
+const ForumPost = ({ 
+  post, 
+  datasetId,
+  onVote, 
+  onAddResponse,
+  onDelete,
+  responses,
+  onDeleteResponse
 }) => {
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [replyText, setReplyText] = useState('');
+  const [isResponsesVisible, setIsResponsesVisible] = useState(false);
+  const [newResponse, setNewResponse] = useState('');
+  
 
-  const handleReply = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (replyText.trim()) {
-      onReply(comment.id, replyText);
-      setReplyText('');
-      setActiveReplyId(null);
+    if (newResponse.trim()) {
+      await onAddResponse(datasetId, post.forumId, newResponse);
+      setNewResponse('');
     }
   };
 
-  const hasReplies = comment.replies && comment.replies.length > 0;
-  const isReplying = activeReplyId === comment.id;
-
   return (
-    <div className={`${depth > 0 ? 'ml-2 border-l border-gray-200 pl-1' : ''}`}>
-      <div className="flex items-start gap-1">
-        <div className="w-4 flex items-center justify-center">
-          {hasReplies && (
-            <button
-              onClick={() => setIsMinimized(!isMinimized)}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              {isMinimized ? <ChevronDown size={12} /> : <ChevronUp size={12} />}
-            </button>
-          )}
+    <div className="border rounded p-4">
+      <div className="flex gap-4">
+        <div className="flex flex-col items-center">
+          <button
+            onClick={() => onVote(datasetId, post.forumId, 'upvote')}
+            className="hover:bg-gray-100 rounded p-1"
+          >
+            <ChevronUp size={16} className="text-gray-400" />
+          </button>
+          <span className="text-xs text-gray-600">{post.upvotes}</span>
+          <button
+            onClick={() => onVote(datasetId, post.forumId, 'downvote')}
+            className="hover:bg-gray-100 rounded p-1"
+          >
+            <ChevronDown size={16} className="text-gray-400" />
+          </button>
         </div>
-        <div className="flex-1  rounded px-1"> { /* Border of each comments/replies */}
-          <div className="flex justify-between items-start gap-1">
-            <div>
-              <span className="text-xs text-gray-900 leading-tight">{comment.text}</span>
-              <div className="flex items-center gap-2  ">
-                <span className="text-xs text-gray-500">
-                  {comment.author} · {comment.timeAgo}
-                </span>
-                <button
-                  onClick={() => {
-                    if (isReplying) {
-                      setActiveReplyId(null);
-                    } else {
-                      setActiveReplyId(comment.id);
-                      setReplyText('');
-                    }
-                  }}
-                  className="text-xs text-blue-500 hover:text-blue-600 flex items-center"
-                >
-                  <MessageSquare size={10} className="mr-1" />
-                  Reply
-                </button>
-              </div>
-            </div>
+
+        <div className="flex-1">
+          <div className="flex justify-between">
+            <h2 className="text-base font-medium text-gray-900">{post.title}</h2>
+            {post.canDelete && (
+              <button
+                onClick={() => onDelete(datasetId, post.forumId)}
+                className="text-xs text-red-500 hover:text-red-600"
+              >
+                Delete
+              </button>
+            )}
           </div>
+          <p className="text-sm text-gray-700 mt-1">{post.content}</p>
+          <div className="flex text-xs text-gray-500 mt-2">
+            by {post.username} · {new Date(post.timestamp).toLocaleString()}
+          </div>
+          
+          <button
+            onClick={() => setIsResponsesVisible(!isResponsesVisible)}
+            className="text-xs text-blue-500 hover:text-blue-600 mt-2"
+          >
+            {responses.length} {responses.length === 1 ? 'response' : 'responses'}
+          </button>
         </div>
       </div>
 
-      {isReplying && (
-        <div className="flex items-center gap-1 ml-6 mt-0.5">
-          <div className="flex-1 items-center h-8">
-          <div className="flex gap-1">
-            <input
-              type="text"
-              onChange={(e) => setReplyText(e.target.value)}
-              placeholder="comment..."
-              className="flex-1 px-4 h-8 border rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleReply(e);
-                }
-                if (e.key === 'Escape') {
-                    setActiveReplyId(null);
-                }
-              }}
-              autoFocus
-            />
-            
-          </div>
- 
-          </div>
-          <button
-              onChange={() => setActiveReplyId(null)}
-              className="px-2 h-8 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
-            >
-              Reply
-          </button>
-          <button
-            onClick={() => setActiveReplyId(null)}
-            className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 bg-gray-100 rounded"
-          >
-            <X size={14} />
-          </button>
-        </div>
-      )}
+      {isResponsesVisible && (
+        <div className="mt-4">
+          <form onSubmit={handleSubmit} className="mb-4">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newResponse}
+                onChange={(e) => setNewResponse(e.target.value)}
+                placeholder="Add a response..."
+                className="flex-1 px-4 h-8 border rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+              <button
+                type="submit"
+                className="px-4 h-8 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Reply
+              </button>
+            </div>
+          </form>
 
-      {!isMinimized && hasReplies && (
-        <div>
-          {comment.replies.map((reply) => (
-            <Comment
-              key={reply.id}
-              comment={reply}
-              onReply={onReply}
-              depth={depth + 1}
-              activeReplyId={activeReplyId}
-              setActiveReplyId={setActiveReplyId}
+          {responses.map((response) => (
+            <Response
+              key={response.forumId}
+              response={response}
+              datasetId={datasetId}
+              onDelete={onDeleteResponse}
             />
           ))}
         </div>
@@ -124,226 +130,217 @@ const Comment = ({
   );
 };
 
-const CommentSection = ({ postId, comments, onAddComment }) => {
-    const [newComment, setNewComment] = useState('');
-    const [activeReplyId, setActiveReplyId] = useState(null);
-  
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      if (newComment.trim()) {
-        onAddComment(postId, {
-          id: Date.now(),
-          text: newComment,
-          author: 'User',
-          timeAgo: 'just now',
-          replies: []
-        });
-        setNewComment('');
-      }
-    };
-  
-    return (
-      <div className="mt-1">
-        <form onSubmit={handleSubmit} className="mb-1">
-          <div className="flex gap-1">
-            <input
-              type="text"
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Add a comment..."
-              className="flex-1 px-4 h-8 border rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
-            <button
-              type="submit"
-              className="px-2 h-8 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Comment
-            </button>
-          </div>
-        </form>
-  
-        <div>
-          {comments.map((comment) => (
-            <Comment
-              key={comment.id}
-              comment={comment}
-              onReply={(commentId, text) => {
-                onAddComment(postId, {
-                  id: Date.now(),
-                  text,
-                  author: 'User',
-                  timeAgo: 'just now',
-                  replies: []
-                }, commentId);
-              }}
-              activeReplyId={activeReplyId}
-              setActiveReplyId={setActiveReplyId}
-            />
-          ))}
-        </div>
-      </div>
-    );
-};
-
-const ForumPost = ({ post, onVote, onAddComment }) => {
-    const [isCommentsVisible, setIsCommentsVisible] = useState(false);
-    const [isMinimized, setIsMinimized] = useState(false);
-  
-    return (
-      <div className="border rounded p-2 ">
-        <div className="flex gap-2">
-          <div className="flex flex-col items-center">
-            <button
-              onClick={() => onVote(post.id)}
-              className="hover:bg-gray-100 rounded"
-            >
-              <ChevronUp size={16} className="text-gray-400" />
-            </button>
-            <span className="text-xs text-gray-600">{post.votes}</span>
-          </div>
-  
-          <div className="flex-1 ">
-            <h2 className="text-base font-medium text-gray-900">{post.title}</h2>
-            <div className="flex text-xs text-gray-500 ">
-              by {post.author} · {post.timeAgo} ·{' '}
-              <div className="flex items-center gap-2 inline-flex  ">
-                {post.comments.length === 0 ? (
-                      <div className="text-xs text-gray-500  ">
-       
-                          No comments yet - be the first to comment!
-                      </div>
-                      
-                  ) : (
-                      <div>
-                          {post.comments.length} {post.comments.length === 1 ? 'comment' : 'comments'}
-                      </div>
-                  )}
-
-              </div>
-              
-              <button
-                onClick={() => {
-                  if (!isCommentsVisible) {
-                    setIsCommentsVisible(true);
-                    setIsMinimized(false);
-                  } else {
-                    setIsMinimized(!isMinimized);
-                  }
-                }}
-                className="rounded bg-blue-500 hover:bg-blue-600 flex items-center gap-4 inline-flex rounded mx-4"
-              >
-                
-                {isCommentsVisible && (
-                  <span className="flex text-white  ">
-                    {isMinimized ? <Plus size={15} className='' /> : <Minus size={15} />}
-                  </span>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-  
-        {isCommentsVisible && !isMinimized && (
-          <div className="ml-6">
-            <div className="m-4">
-                
-                <CommentSection
-                  postId={post.id}
-                  comments={post.comments}
-                  onAddComment={onAddComment}
-                />
-              </div>
-          </div>
-        )}
-      </div>
-    );
-
-};
-
-// Main Forum Component
-const Forum = () => {
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      title: 'An update on Dart macros & data serialization',
-      author: 'oltman',
-      timeAgo: '53 minutes ago',
-      votes: 26,
-      comments: []
-    }
-  ]);
-
+const Forum = ({ datasetID }) => {
+  const [posts, setPosts] = useState([]);
+  const [responses, setResponses] = useState({});
   const [showNewPost, setShowNewPost] = useState(false);
   const [newPostTitle, setNewPostTitle] = useState('');
+  const [newPostContent, setNewPostContent] = useState('');
+  const [upvoteStatus, setUpvoteStatus] = useState({});
+  const [sessionId, setSessionId] = useState("");
 
-  const handleAddPost = (e) => {
-    e.preventDefault();
-    if (newPostTitle.trim()) {
-      const newPost = {
-        id: Date.now(),
-        title: newPostTitle,
-        author: 'User',
-        timeAgo: 'just now',
-        votes: 0,
-        comments: []
-      };
-      setPosts([newPost, ...posts]);
-      setNewPostTitle('');
-      setShowNewPost(false);
+  useEffect(() => {
+    //fetchPosts();
+    console.log("this is it ", datasetID)
+    // You might want to set up a polling mechanism or websocket
+    // to keep the posts updated in real-time
+  }, [datasetID]);
+
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/public/discussions/${datasetID}/forums`
+      );
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch all dataset IDs");
+      }
+ 
+      const data = await response.json();
+      setPosts(data);
+
+      // Fetch upvote status for all posts
+
+      const forumIds = data.map(post => post.forumId);
+
+      const upvoteResponse = await fetch('http://localhost:3000/api/secure/discussions/hasUpvotedOrDownvoted');
+      if  (!upvoteResponse) {
+        throw new Error("Failed to fetch upvote response")
+      }
+      
+      const upvoteData = await upvoteResponse.json();
+      const statusMap = {};
+      forumIds.forEach((id, index) => {
+        statusMap[id] = upvoteData[index];
+      });
+      setUpvoteStatus(statusMap);
+      
+      // Fetch responses for each post
+      await Promise.all(data.map(post => fetchResponses(post.forumId)));
+    } catch (error) {
+      console.error('Error fetching posts hrere :', error);
     }
   };
 
-  const handleVote = (postId) => {
-    setPosts(posts.map(post =>
-      post.id === postId ? { ...post, votes: post.votes + 1 } : post
-    ));
+  const fetchResponses = async (forumId) => {
+    try {
+        const response = await fetch(
+            `http://localhost:8080/api/public/discussions/${datasetID}/forum/${forumId}/responses`
+        );
+        const data = await response.json();
+        setResponses(prev => ({
+            ...prev,
+            [forumId]: data
+        }));
+    } catch (error) {
+        console.error('Error fetching responses:', error);
+    }
+};
+
+
+const handleAddPost = async (e) => {
+  e.preventDefault();
+  
+  if (newPostTitle.trim() && newPostContent.trim()) {
+    // console.log(datasetID, newPostTitle, newPostContent);
+      try {
+       const session = await fetchAuthSession();
+       console.log(datasetID, newPostTitle, newPostContent);
+
+       const sessionId2 = session.tokens.idToken.toString();
+       setSessionId(sessionId2);
+       
+      console.log("session", session);
+ 
+      const headers = {
+        Authorization: "Bearer " + sessionId2,
+      };
+
+      
+
+      const response = await fetch(
+        "http://localhost:8080/api/secure/discussions/createForum",
+        {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify({
+            datasetId: datasetID,
+            content: newPostTitle,
+            forumId: newPostContent
+          }),
+        }
+      );
+
+          if (!response.ok) {
+              throw new Error(`Failed to create forum post: ${response.status}`);
+          }
+
+          setNewPostTitle('');
+          setNewPostContent('');
+          setShowNewPost(true);
+          fetchPosts();  // Refresh posts
+      } catch (error) {
+          console.error('Error creating post:', error);
+      }
+  }
+};
+
+
+  const handleVote = async (datasetId, forumId, voteType) => {
+    try {
+      const response = await fetch(`/api/secure/discussions/${datasetId}/${forumId}/${voteType}`, {
+        method: 'POST'
+      });
+      const changeAmount = await response.json();
+      
+      // Update the posts with the new vote count
+      setPosts(posts.map(post => 
+        post.forumId === forumId 
+          ? { ...post, upvotes: post.upvotes + changeAmount } 
+          : post
+      ));
+      
+      // Update the upvote status
+      setUpvoteStatus(prev => ({
+        ...prev,
+        [forumId]: voteType === 'upvote' ? 'upvoted' : 'downvoted'
+      }));
+    } catch (error) {
+      console.error('Error voting:', error);
+    }
   };
 
-  const handleAddComment = (postId, newComment, parentCommentId = null) => {
-    setPosts(posts.map(post => {
-      if (post.id !== postId) return post;
+  const handleAddResponse = async (datasetId, forumId, content) => {
+    try {
+      await fetch('/api/secure/discussions/createResponse', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          datasetId: datasetId,
+          forumId: forumId,
+          content: content
+        })
+      });
+      fetchResponses(forumId);
+    } catch (error) {
+      console.error('Error creating response:', error);
+    }
+  };
 
-      if (!parentCommentId) {
-        return {
-          ...post,
-          comments: [...post.comments, newComment]
-        };
-      }
+  const handleDeletePost = async (datasetId, forumId) => {
+    try {
+      await fetch('/api/secure/discussions/deleteForum', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          datasetId: datasetId,
+          forumId: forumId
+        })
+      });
+      //fetchPosts();
+    } catch (error) {
+      console.error('Error deleting post:', error);
+    }
+  };
 
-      const addReply = (comments) => {
-        return comments.map(comment => {
-          if (comment.id === parentCommentId) {
-            return {
-              ...comment,
-              replies: [...(comment.replies || []), newComment]
-            };
-          }
-          if (comment.replies) {
-            return {
-              ...comment,
-              replies: addReply(comment.replies)
-            };
-          }
-          return comment;
-        });
-      };
-
-      return {
-        ...post,
-        comments: addReply(post.comments)
-      };
-    }));
+  const handleDeleteResponse = async (datasetId, forumId) => {
+    try {
+      await fetch('/api/secure/discussions/deleteResponse', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          datasetId: datasetId,
+          forumId: forumId
+        })
+      });
+      const originalForumId = forumId.split('_')[0];
+      fetchResponses(originalForumId);
+    } catch (error) {
+      console.error('Error deleting response:', error);
+    }
   };
 
   return (
-    <div className="">
+    <div className="max-w-3xl mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Forum</h1>
+        <h1 className="text-2xl font-bold">Discussion</h1>
         <button
           onClick={() => setShowNewPost(true)}
-          className="px-3 py-1 bg-black text-white rounded text-sm hover:bg-gray-800"
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
-          New
+          New Post
         </button>
       </div>
 
@@ -356,17 +353,24 @@ const Forum = () => {
             placeholder="Enter post title..."
             className="w-full p-2 border rounded mb-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
-          <div className="flex justify-end space-x-2">
+          <textarea
+            value={newPostContent}
+            onChange={(e) => setNewPostContent(e.target.value)}
+            placeholder="Enter post content..."
+            className="w-full p-2 border rounded mb-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            rows={4}
+          />
+          <div className="flex justify-end gap-2">
             <button
               type="button"
               onClick={() => setShowNewPost(false)}
-              className="px-3 py-1 text-gray-600 hover:text-gray-800"
+              className="px-4 py-2 text-gray-600 hover:text-gray-800"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
               Create Post
             </button>
@@ -377,10 +381,14 @@ const Forum = () => {
       <div className="space-y-4">
         {posts.map(post => (
           <ForumPost
-            key={post.id}
+            key={post.forumId}
             post={post}
+            datasetId={datasetID}
             onVote={handleVote}
-            onAddComment={handleAddComment}
+            onAddResponse={handleAddResponse}
+            onDelete={handleDeletePost}
+            responses={responses[post.forumId] || []}
+            onDeleteResponse={handleDeleteResponse}
           />
         ))}
       </div>
