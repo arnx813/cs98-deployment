@@ -216,6 +216,13 @@ const handleAddPost = async (e) => {
         Authorization: "Bearer " + sessionId2,
       };
 
+      const submissionData = new FormData();
+      submissionData.append("datasetId", "testID");
+      submissionData.append("content", "test");
+      submissionData.append("title", "test");
+
+
+
       
 
       const response = await fetch(
@@ -223,13 +230,10 @@ const handleAddPost = async (e) => {
         {
           method: "POST",
           headers: headers,
-          body: JSON.stringify({
-            datasetId: datasetID,
-            content: newPostTitle,
-            forumId: newPostContent
-          }),
+          body: submissionData
         }
       );
+      
 
           if (!response.ok) {
               throw new Error(`Failed to create forum post: ${response.status}`);
