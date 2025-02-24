@@ -221,7 +221,7 @@ const Discover = () => {
               key={dataset.id}
               state={{
                 id: dataset.id,
-                title: dataset.title,
+                title: dataset.name,
                 price: dataset.price,
                 image: dataset.image,
                 description: dataset.description,

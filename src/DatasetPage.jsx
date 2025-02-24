@@ -151,7 +151,7 @@ const DatasetPage = () => {
           </div>
         </div>
         <hr className="border-gray-300 mb-4" />
-        <Forum/>
+        <Forum datasetID={id}/>
       </div>
     </div>
   );
