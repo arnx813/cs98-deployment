@@ -15,6 +15,7 @@ import { UploadForm } from "./DatasetOperations/Upload-Form";
 import { Toaster } from "./components/ui/toaster";
 import DatasetOperationPage from "./DatasetOperations/page";
 import SellerForm from "./seller-form";
+import { AdminApprovalsTable } from "./admin-form-approval"
 
 // Amplify stuff
 import { Amplify } from "aws-amplify";
@@ -42,6 +43,8 @@ function App() {
           <Route path="seller-form" element={<SellerForm />} />
           <Route path="/checkout/:id" element={<Checkout />} />
           <Route path="/download/:id" element={<Download />} />
+
+          <Route path="/admin" element={<AdminApprovalsTable/>} />
         </Routes>
       </Router>
       <Toaster/>
