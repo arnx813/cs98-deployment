@@ -16,6 +16,8 @@ const Profile = () => {
   const [sessionId, setSessionId] = useState("");
   const [error, setError] = useState("");
   const [starredDatasets, setStarredDatasets] = useState([]);
+  const [isSeller, setIsSeller] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,7 +35,10 @@ const Profile = () => {
       try {
         setUserStarredDatasetIds([1, 2, 3]); // Example dataset IDs
       } catch (error) {
-        console.error("Could not fetch starred dataset IDs for this user:", error);
+        console.error(
+          "Could not fetch starred dataset IDs for this user:",
+          error
+        );
       }
     };
 
@@ -79,20 +84,31 @@ const Profile = () => {
   useEffect(() => {
     const fetchStarredDatasetIDs = async () => {
       try {
+        const session = await fetchAuthSession();
+        const sessionId = session.tokens.idToken.toString();
+        const headers = {
+          Authorization: "Bearer " + sessionId,
+        };
+
         const user = await getCurrentUser();
-        const response = await fetch(
-          `http://localhost:8080/user/${user.userId}/getStarred`
-        );
+
+        const response = await fetch("http://localhost:8080/api/secure/user/getStarred", {
+          method: "GET",
+          headers: headers,
+        });
+
         if (!response.ok) {
           throw new Error("Failed to fetch dataset IDs");
         }
         const data = await response.json();
-        console.log("Fetched starred dataset IDs:", data);
+        console.log("Fetched starred datasets", data);
         setStarredDatasetIDs(data);
       } catch (error) {
         setError(error.message);
       }
     };
+
+   
 
     fetchStarredDatasetIDs();
   }, []);
@@ -102,7 +118,7 @@ const Profile = () => {
       try {
         const datasetPromises = starredDatasetIds.map(async (id) => {
           const infoResponse = await fetch(
-            `http://localhost:8080/datasets/getDatasetInformation/${id}`
+            `http://localhost:8080/api/public/datasets/getDatasetInformation/${id}`
           );
           if (!infoResponse.ok) {
             throw new Error(`Failed to fetch dataset info for ID: ${id}`);
@@ -110,7 +126,7 @@ const Profile = () => {
           const infoData = await infoResponse.json();
 
           const imageResponse = await fetch(
-            `http://localhost:8080/datasets/getDatasetSinglePreviewImage/${id}`
+            `http://localhost:8080/api/public/datasets/getDatasetSinglePreviewImage/${id}`
           );
           if (!imageResponse.ok) {
             throw new Error(`Failed to fetch dataset image for ID: ${id}`);
@@ -140,6 +156,45 @@ const Profile = () => {
     }
   }, [starredDatasetIds]);
 
+  const checkSellerStatus = async () => {
+    try {
+      const username = await getCurrentUser();
+      const session = await fetchAuthSession();
+        const sessionId2 = session.tokens.idToken.toString();
+        setSessionId(sessionId2);
+        console.log("session", session);
+
+        const headers = {
+          Authorization: "Bearer " + sessionId2,
+        };
+
+      console.log('id: ', username)
+
+
+      if (!username) return;
+      console.log("Checking seller status...");
+      
+      const response = await fetch(`http://localhost:8080/api/public/user/${username.username}/isSeller`, {
+        method: "GET",
+        // headers: headers,
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to check seller status");
+      }
+      
+      const data = await response.json();
+      setIsSeller(data);
+      console.log("Seller status:", data ? "seller: true" : "seller: false");
+    } catch (error) {
+      console.error("Error checking seller status:", error);
+    }
+  };
+
+  useEffect(() => {
+    checkSellerStatus();
+  }, []);
+
   return (
     <div className="min-h-screen">
       <Authenticator>
@@ -153,9 +208,14 @@ const Profile = () => {
             />
             <div>
               <h1 className="text-3xl font-bold text-gray-800">Aaron Xie</h1>
-              <p className="text-gray-600">{userEmail || "jane.doe@example.com"}</p>
+              <p className="text-gray-600">
+                {userEmail || "jane.doe@example.com"}
+              </p>
             </div>
           </div>
+
+          <p>{isSeller ? "seller: true" : "seller: false"}</p>
+
 
           <div className="mt-10">
             <h2 className="text-xl font-semibold text-gray-800">
