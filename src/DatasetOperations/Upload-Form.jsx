@@ -141,7 +141,11 @@ export function UploadForm() {
         throw new Error("Failed to upload file");
       }
 
+      // Parse the response body as JSON
+      const responseText = await response.text();
+      console.log("Response Text:", responseText);
       console.log("File uploaded successfully");
+
       setOpen(false);
       toast({
         title: "Success!",
