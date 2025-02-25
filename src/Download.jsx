@@ -14,13 +14,13 @@ const Download = () => {
       console.log("The ID is", id);
 
       // Fetch authentication session
-    const session = await fetchAuthSession();
-    const sessionId = session.tokens.idToken.toString();
-    console.log("Session ID:", sessionId);
+      const session = await fetchAuthSession();
+      const sessionId = session.tokens.idToken.toString();
+      console.log("Session ID:", sessionId);
 
-    const headers = {
-      Authorization: "Bearer " + sessionId,
-    };
+      const headers = {
+        Authorization: "Bearer " + sessionId,
+      };
 
       // Fetch the dataset as a Blob
       const response = await fetch(
@@ -48,7 +48,10 @@ const Download = () => {
       // Get the filename from the response headers
       const contentDisposition = response.headers.get("Content-Disposition");
       let filename = "downloaded_file.zip"; // Default filename
-      if (contentDisposition && contentDisposition.indexOf("attachment") !== -1) {
+      if (
+        contentDisposition &&
+        contentDisposition.indexOf("attachment") !== -1
+      ) {
         const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
         if (filenameMatch && filenameMatch.length === 2) {
           filename = filenameMatch[1];
@@ -85,21 +88,21 @@ const Download = () => {
             Thank You for Your Purchase!
           </h1>
           <p className="text-gray-600 mb-8">
-            Your dataset is ready to download. Click the button below to start your
-            download.
+            Your dataset is ready to download. Click the button below to start
+            your download.
           </p>
           <button
-  onClick={handleDownload}
-  disabled={isDownloading}
-  style={{
-    backgroundColor: isDownloading ? '#A0AEC0' : '#642DFF', // Gray for disabled, purple for normal
-  }}
-  className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white ${
-    isDownloading ? "" : "hover:bg-blue-700"
-  } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
->
-  {isDownloading ? "Downloading..." : "Download Dataset"}
-</button>
+            onClick={handleDownload}
+            disabled={isDownloading}
+            style={{
+              backgroundColor: isDownloading ? "#A0AEC0" : "#642DFF", // Gray for disabled, purple for normal
+            }}
+            className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white ${
+              isDownloading ? "" : "hover:bg-blue-700"
+            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+          >
+            {isDownloading ? "Downloading..." : "Download Dataset"}
+          </button>
         </div>
       </div>
     </div>
