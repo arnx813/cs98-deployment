@@ -269,6 +269,9 @@ const Profile = () => {
   const [userId, setUserId] = useState(null);
   const [isSeller, setIsSeller] = useState(false);
   const [starredDatasets, setStarredDatasets] = useState([]);
+  const [sessionId, setSessionId] = useState("");
+
+  // console.log("im on the profile page and u are a ", isS)
 
   const navigate = useNavigate();
 
@@ -290,6 +293,44 @@ const Profile = () => {
     };
 
     fetchUserData();
+  }, []);
+
+    const checkSellerStatus = async () => {
+    try {
+      const username = await getCurrentUser();
+      const session = await fetchAuthSession();
+        const sessionId2 = session.tokens.idToken.toString();
+        setSessionId(sessionId2);
+        console.log("session", session);
+
+        const headers = {
+          Authorization: "Bearer " + sessionId2,
+        };
+
+      console.log('id: ', username)
+
+      if (!username) return;
+      console.log("Checking seller status...");
+
+      const response = await fetch(`http://localhost:8080/api/public/user/${username.username}/isSeller`, {
+        method: "GET",
+        // headers: headers,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to check seller status");
+      }
+
+      const data = await response.json();
+      setIsSeller(data);
+      console.log("Seller status:", data ? "seller: true" : "seller: false");
+    } catch (error) {
+      console.error("Error checking seller status:", error);
+    }
+  };
+
+  useEffect(() => {
+    checkSellerStatus();
   }, []);
 
   // Function to create user in DynamoDB if they don't exist

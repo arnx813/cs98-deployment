@@ -17,6 +17,7 @@ import { Toaster } from "./components/ui/toaster";
 import DatasetOperationPage from "./DatasetOperations/page";
 import SellerForm from "./seller-form";
 import Admin from "./Admin"
+import { AdminApprovalsTable } from "./admin-form-approval"
 
 // Amplify stuff
 import { Amplify } from "aws-amplify";
@@ -46,6 +47,8 @@ function App() {
           <Route path="/download/:id" element={<Download />} />
           <Route path="/admin" element={<Admin />} />
 
+
+          <Route path="/admin" element={<AdminApprovalsTable/>} />
         </Routes>
         <Toaster/>
         <Footer />

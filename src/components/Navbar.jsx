@@ -52,11 +52,16 @@ const Navbar = () => {
 
       const data = await response.json();
       setIsSeller(data);
-      console.log("Seller status:", data ? "seller: true" : "seller: false");
+
+
+      // console.log("Seller status:", data ? "seller: true" : "seller: false");
     } catch (error) {
       console.error("Error checking seller status:", error);
     }
   };
+
+  console.log("im on the navbar page and u are a ", isSeller)
+
 
   useEffect(() => {
     checkSellerStatus();
