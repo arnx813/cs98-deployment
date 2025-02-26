@@ -272,6 +272,10 @@ const Profile = () => {
   const [sessionId, setSessionId] = useState("");
   const [starredDatasetIds, setStarredDatasetIDs] = useState([]);
   const [error, setError] = useState("");
+  const [uploadedDatasets, setUploadedDatasets] = useState([]);
+
+  const [uploadedDatasetIds, setUploadedDatasetIDs] = useState([]);
+
 
   // console.log("im on the profile page and u are a ", isS)
 
@@ -288,7 +292,7 @@ const Profile = () => {
         console.log("User ID:", username);
 
         // Check if user exists in DynamoDB, if not, create them
-        await createUserIfNew(username);
+        // await createUserIfNew(username);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -416,33 +420,104 @@ const Profile = () => {
 
   useEffect(() => {
     checkSellerStatus();
+    fetchUploadedDatasets();
+
   }, []);
 
-  // Function to create user in DynamoDB if they don't exist
-  const createUserIfNew = async (username) => {
+  const fetchUploadedDatasets = async () => {
     try {
+      const username = await getCurrentUser();
+
       const response = await fetch(
-        `http://localhost:8080/api/public/user/create/${username}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        }
+        `http://localhost:8080/api/public/user/${username.username}/getUploaded`
       );
-
       if (!response.ok) {
-        throw new Error("Failed to create user in DynamoDB");
+        throw new Error("Failed to fetch user's uploaded datasets");
       }
+      const data = await response.json();
+      console.log("test asdfasdfas");
 
-      const result = await response.json();
-      if (result) {
-        console.log("User successfully created in DynamoDB");
-      } else {
-        console.log("User already exists in DynamoDB");
-      }
+      console.log("Fetched uploaded dataset information:", data);
+      setUploadedDatasetIDs(data);
+
+      // setDataset(data);
     } catch (error) {
-      console.error("Error creating user in DynamoDB:", error);
+      setError(error.message);
     }
   };
+
+  useEffect(() => {
+    const fetchUploadedDatasetDetails = async () => {
+      try {
+        console.log("get uploaded datasets")
+
+
+        const datasetPromises = uploadedDatasetIds.map(async (id) => {
+          const infoResponse = await fetch(
+            `http://localhost:8080/api/public/datasets/getDatasetInformation/${id}`
+          );
+          if (!infoResponse.ok) {
+            throw new Error(`Failed to fetch dataset info for ID: ${id}`);
+          }
+          const infoData = await infoResponse.json();
+
+          const imageResponse = await fetch(
+            `http://localhost:8080/api/public/datasets/getDatasetSinglePreviewImage/${id}`
+          );
+          if (!imageResponse.ok) {
+            throw new Error(`Failed to fetch dataset image for ID: ${id}`);
+          }
+          const imageBlob = await imageResponse.blob();
+          const imageURL = URL.createObjectURL(imageBlob);
+
+          return {
+            id,
+            title: infoData.name,
+            price: infoData.price,
+            image: imageURL,
+            description: infoData.description,
+          };
+        });
+
+        const uploadedDatasets = await Promise.all(datasetPromises);
+        setUploadedDatasets(uploadedDatasets);
+        console.log('fetching uploaded datsets:')
+        console.log(uploadedDatasets);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    if (uploadedDatasetIds && uploadedDatasetIds.length > 0) {
+      fetchUploadedDatasetDetails();
+    }
+  }, [uploadedDatasetIds]);
+
+  // Function to create user in DynamoDB if they don't exist
+  // const createUserIfNew = async (username) => {
+  //   try {
+  //     const response = await fetch(
+  //       `http://localhost:8080/api/public/user/create/${username}`,
+  //       {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error("Failed to create user in DynamoDB");
+  //     }
+
+  //     const result = await response.json();
+  //     if (result) {
+  //       console.log("User successfully created in DynamoDB");
+  //     } else {
+  //       console.log("User already exists in DynamoDB");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error creating user in DynamoDB:", error);
+  //   }
+  // };
 
   return (
     <div className="min-h-screen">

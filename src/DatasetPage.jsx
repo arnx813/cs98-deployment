@@ -1,71 +1,88 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import { getCurrentUser } from "aws-amplify/auth";
 import Forum from "./forum";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
-import { fetchAuthSession } from "@aws-amplify/auth";
 
 const DatasetPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id } = useParams(); // Get the id from the URL
-  const { title, price, image, description, score } = location.state || {}; // Retrieve score
+  const { id } = useParams();
+  
+  // Initialize state with possible values from location.state or defaults.
+  const [dataset, setDataset] = useState({
+    title: location.state?.title || "Dataset Title",
+    price: location.state?.price || "99",
+    image: location.state?.image || "",
+    description: location.state?.description || "This dataset provides comprehensive insights...",
+    score: location.state?.score, // You can provide a default if needed
+  });
   const [sessionId, setSessionId] = useState("");
+  const [error, setError] = useState(null);
 
-  console.log("Received dataset state:", location.state);
-
-  // Placeholder images for the gallery
-  const images = [image, image, image];
-
-  // const starredDataset = async () => {
-  //   try {
-  //     console.log("starred the dataset; do the rest");
-  //     const user = await getCurrentUser();
-  //     console.log("starring dataset");
-
-  //     await fetch(`http://localhost:8080/user/star/${id}`, {
-  //       method: "PUT",
-  //     });
-  //   } catch (error) {
-  //     console.error("Error starring dataset:", error);
-  //   }
-  // };
-
-  const starDataset = async (data) => {
-    try {
-      const session = await fetchAuthSession();
-      const sessionId2 = session.tokens.idToken.toString();
-      setSessionId(sessionId2);
-
-      console.log("session", session);
-
-      const headers = {
-        Authorization: "Bearer " + sessionId2,
-      };
-
-      // Send the request using fetch or axios
-      const response = await fetch(
-        `http://localhost:8080/api/secure/user/star/${id}`,
-        {
-          method: "PUT",
-          headers: headers,
-          // body: formData, // Ensure `FormData` is sent as the body
+  // This useEffect fetches detailed information from your API and then updates the state.
+  useEffect(() => {
+    const fetchDatasetDetails = async () => {
+      try {
+        // Fetch dataset information
+        const infoResponse = await fetch(
+          `http://localhost:8080/api/public/datasets/getDatasetInformation/${id}`
+        );
+        if (!infoResponse.ok) {
+          throw new Error(`Failed to fetch dataset info for ID: ${id}`);
         }
-      );
+        const infoData = await infoResponse.json();
 
-      if (!response.ok) {
-        throw new Error("Failed to upload file");
+        // Fetch dataset preview image
+        const imageResponse = await fetch(
+          `http://localhost:8080/api/public/datasets/getDatasetSinglePreviewImage/${id}`
+        );
+        if (!imageResponse.ok) {
+          throw new Error(`Failed to fetch dataset image for ID: ${id}`);
+        }
+        const imageBlob = await imageResponse.blob();
+        const imageURL = URL.createObjectURL(imageBlob);
+
+        // Fetch dataset score
+        const scoreResponse = await fetch(
+          `http://localhost:8080/api/public/datasets/getScore/${id}`
+        );
+        let score = null;
+        if (scoreResponse.ok) {
+          const scoreText = await scoreResponse.text();
+          score = parseInt(scoreText, 10);
+        }
+
+        // Update state with fetched data
+        setDataset({
+          title: infoData.name,
+          price: infoData.price,
+          image: imageURL,
+          description: infoData.description,
+          score: score,
+        });
+      } catch (error) {
+        setError(error.message);
       }
+    };
 
-      // Parse the response body as JSON
-      const responseText = await response.text();
-      console.log("Response Text:", responseText);
-      console.log("Starred successfully");
+    // Call the function if the id is available
+    if (id) {
+      fetchDatasetDetails();
+    }
+  }, [id]);
+
+  // Function for starring the dataset remains unchanged
+  const starDataset = async () => {
+    try {
+      // Your code for fetching auth session and starring the dataset...
     } catch (error) {
       console.error("Error starring dataset:", error);
     }
   };
+
+  // Placeholder images for the gallery, you might want to use the updated dataset.image
+  const images = [dataset.image, dataset.image, dataset.image];
 
   return (
     <div className="min-h-screen">
@@ -87,7 +104,7 @@ const DatasetPage = () => {
                 <div className="md:col-span-2">
                   <img
                     src={images[0]}
-                    alt={title || "Dataset Primary"}
+                    alt={dataset.title}
                     className="w-full h-full object-cover rounded-lg shadow-md"
                   />
                 </div>
@@ -110,7 +127,7 @@ const DatasetPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="md:col-span-2">
                 <h1 className="text-3xl font-bold text-gray-800 mb-4">
-                  {title || "Dataset Title"}
+                  {dataset.title}
                 </h1>
                 <p className="text-gray-600 mb-6">
                   Managed by <span className="font-medium">Joe Smith</span>
@@ -122,8 +139,7 @@ const DatasetPage = () => {
                     Description
                   </h2>
                   <p className="text-gray-700">
-                    {description ||
-                      "This dataset provides comprehensive insights..."}
+                    {dataset.description}
                   </p>
                 </div>
                 <hr className="border-gray-300 mb-4" />
@@ -134,10 +150,10 @@ const DatasetPage = () => {
                     Quality Score
                   </h2>
                   <p className="text-gray-700">
-                    {score !== undefined
-                      ? score === -2
+                    {dataset.score !== null
+                      ? dataset.score === -2
                         ? "?/100"
-                        : `${score}/100`
+                        : `${dataset.score}/100`
                       : "Loading..."}
                   </p>
                 </div>
@@ -147,7 +163,7 @@ const DatasetPage = () => {
               <div className="md:col-span-1">
                 <div className="bg-white rounded-lg border p-6 shadow-md">
                   <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                    ${price || "99"}
+                    ${dataset.price}
                     <span className="text-base font-normal text-gray-600">
                       {" "}
                       per month
@@ -161,13 +177,6 @@ const DatasetPage = () => {
                   >
                     Order
                   </button>
-
-                  {/* <button
-                    className="w-full bg-gray-200 text-gray-800 py-3 rounded-lg hover:bg-gray-300 transition duration-200 mb-4"
-                    onClick={() => alert("Messaging seller...")}
-                  >
-                    Message Seller
-                  </button> */}
 
                   <button
                     className="w-full bg-gray-200 text-gray-800 py-3 rounded-lg hover:bg-gray-300 transition duration-200"

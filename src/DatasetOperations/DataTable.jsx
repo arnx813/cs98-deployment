@@ -22,6 +22,8 @@ import {
   TableHeader,
   TableRow,
 } from "src/components/ui/table";
+import { getCurrentUser, fetchAuthSession } from "@aws-amplify/auth";
+
 
 export function DataTableDemo({ initialData }) {
   const [sorting, setSorting] = useState([]);
@@ -31,58 +33,91 @@ export function DataTableDemo({ initialData }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [uploadedDatasetIds, setUploadedDatasetIDs] = useState([]);
+  const [userEmail, setUserEmail] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [isSeller, setIsSeller] = useState(false);
+  const [starredDatasets, setStarredDatasets] = useState([]);
+  const [sessionId, setSessionId] = useState("");
+  const [starredDatasetIds, setStarredDatasetIDs] = useState([]);
 
   const navigate = useNavigate();
 
-  const updateData = async (datasetID) => {
-    const updatedRow = await getDatasets(datasetID);
-    setData((prevData) =>
-      prevData.map((row) =>
-        row.id === updatedRow.id ? { ...row, ...updatedRow } : row
-      )
-    );
+  // const updateData = async (datasetID) => {
+  //   const updatedRow = await getDatasets(datasetID);
+  //   setData((prevData) =>
+  //     prevData.map((row) =>
+  //       row.id === updatedRow.id ? { ...row, ...updatedRow } : row
+  //     )
+  //   );
+  // };
+
+  const { columns } = getTableConfig(data);
+
+  const fetchUploadedDatasets = async () => {
+    try {
+      const username = await getCurrentUser();
+      const response = await fetch(
+        `http://localhost:8080/api/public/user/${username.username}/getUploaded`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch user's uploaded datasets");
+      }
+      const data = await response.json();
+      console.log("fetched dataest IDs for upload")
+      setUploadedDatasetIDs(data);
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
-  const { columns } = getTableConfig(data, updateData);
+  useEffect(() => {
+    fetchUploadedDatasets();
+  }, []);
 
   useEffect(() => {
-    const fetchTasks = async () => {
+    const fetchUploadedDatasetDetails = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:8080/datasets/getDatasetIDs/20"
-        );
-        if (!response.ok) {
-          throw new Error(`Failed to fetch tasks: ${response.statusText}`);
+        if (uploadedDatasetIds && uploadedDatasetIds.length > 0) {
+          const datasetPromises = uploadedDatasetIds.map(async (id) => {
+            const infoResponse = await fetch(
+              `http://localhost:8080/api/public/datasets/getDatasetInformation/${id}`
+            );
+            if (!infoResponse.ok) {
+              throw new Error(`Failed to fetch dataset info for ID: ${id}`);
+            }
+            const infoData = await infoResponse.json();
+
+            const imageResponse = await fetch(
+              `http://localhost:8080/api/public/datasets/getDatasetSinglePreviewImage/${id}`
+            );
+            if (!imageResponse.ok) {
+              throw new Error(`Failed to fetch dataset image for ID: ${id}`);
+            }
+            const imageBlob = await imageResponse.blob();
+            const imageURL = URL.createObjectURL(imageBlob);
+
+            return {
+              id,
+              name: infoData.name,
+              price: infoData.price,
+              image: imageURL,
+              description: infoData.description,
+            };
+          });
+
+          const datasets = await Promise.all(datasetPromises);
+          setData(datasets);
         }
-        const data = await response.json();
-        const datasetsInfo = await Promise.all(
-          data.map((item) => getDatasets(item))
-        );
-        setData(datasetsInfo);
-      } catch (err) {
-        setError(err.message);
+      } catch (error) {
+        setError(error.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTasks();
-  }, []);
-
-  const getDatasets = async (datasetID) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8080/datasets/getDatasetInformation/${datasetID}`
-      );
-      if (!response.ok) {
-        throw new Error(`Failed to fetch tasks: ${response.statusText}`);
-      }
-
-      return await response.json();
-    } catch (err) {
-      throw err;
-    }
-  };
+    fetchUploadedDatasetDetails();
+  }, [uploadedDatasetIds]);
 
   const table = useReactTable({
     data,
@@ -106,22 +141,21 @@ export function DataTableDemo({ initialData }) {
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
-  <Input
-    placeholder="Filter Dataset..."
-    value={table.getColumn("name")?.getFilterValue() ?? ""}
-    onChange={(event) =>
-      table.getColumn("name")?.setFilterValue(event.target.value)
-    }
-    className="max-w-sm"
-  />
-  <Button className="ml-4" onClick={() => navigate("/upload")}>
-    Upload a Dataset
-  </Button>
-</div>
+        <Input
+          placeholder="Filter Dataset..."
+          value={table.getColumn("name")?.getFilterValue() ?? ""}
+          onChange={(event) =>
+            table.getColumn("name")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+        <Button className="ml-4" onClick={() => navigate("/upload")}>
+          Upload a Dataset
+        </Button>
+      </div>
       <div className="rounded-md border">
         <ScrollArea className="h-[65vh] w-full">
           <Table>
-            {/* Table Header */}
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
@@ -138,7 +172,6 @@ export function DataTableDemo({ initialData }) {
                 </TableRow>
               ))}
             </TableHeader>
-            {/* Table Body */}
             <TableBody>
               {table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
@@ -167,7 +200,6 @@ export function DataTableDemo({ initialData }) {
           </Table>
         </ScrollArea>
       </div>
-      {/* Pagination */}
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="space-x-2">
           <Button

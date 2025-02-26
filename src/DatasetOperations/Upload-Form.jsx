@@ -122,6 +122,14 @@ export function UploadForm() {
       setSessionId(sessionId2);
 
       console.log("session", session);
+      console.log("Form Data:");
+    for (let [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        console.log(`${key}: ${value.name}`);
+      } else {
+        console.log(`${key}: ${value}`);
+      }
+    }
 
       const headers = {
         Authorization: "Bearer " + sessionId2,
