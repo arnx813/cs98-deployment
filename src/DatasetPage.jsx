@@ -48,7 +48,7 @@ const DatasetPage = () => {
       const response = await fetch(
         `http://localhost:8080/api/secure/user/star/${id}`,
         {
-          method: "POST",
+          method: "PUT",
           headers: headers,
           // body: formData, // Ensure `FormData` is sent as the body
         }

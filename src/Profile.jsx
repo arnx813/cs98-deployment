@@ -270,6 +270,8 @@ const Profile = () => {
   const [isSeller, setIsSeller] = useState(false);
   const [starredDatasets, setStarredDatasets] = useState([]);
   const [sessionId, setSessionId] = useState("");
+  const [starredDatasetIds, setStarredDatasetIDs] = useState([]);
+  const [error, setError] = useState("");
 
   // console.log("im on the profile page and u are a ", isS)
 
@@ -295,27 +297,110 @@ const Profile = () => {
     fetchUserData();
   }, []);
 
-    const checkSellerStatus = async () => {
+  useEffect(() => {
+    const fetchStarredDatasetIDs = async () => {
+      try {
+        const session = await fetchAuthSession();
+        const sessionId = session.tokens.idToken.toString();
+        const headers = {
+          Authorization: "Bearer " + sessionId,
+        };
+
+
+        const user = await getCurrentUser();
+
+        const response = await fetch(
+          "http://localhost:8080/api/secure/user/getStarred",
+          {
+            method: "GET",
+            headers: headers,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch dataset IDs");
+        }
+        const data = await response.json();
+        console.log("Fetched starred datasets", data);
+        setStarredDatasetIDs(data);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    fetchStarredDatasetIDs();
+  }, []);
+
+  useEffect(() => {
+    const fetchStarredDatasetDetails = async () => {
+      try {
+        console.log("get starred datasets")
+
+
+        const datasetPromises = starredDatasetIds.map(async (id) => {
+          const infoResponse = await fetch(
+            `http://localhost:8080/api/public/datasets/getDatasetInformation/${id}`
+          );
+          if (!infoResponse.ok) {
+            throw new Error(`Failed to fetch dataset info for ID: ${id}`);
+          }
+          const infoData = await infoResponse.json();
+
+          const imageResponse = await fetch(
+            `http://localhost:8080/api/public/datasets/getDatasetSinglePreviewImage/${id}`
+          );
+          if (!imageResponse.ok) {
+            throw new Error(`Failed to fetch dataset image for ID: ${id}`);
+          }
+          const imageBlob = await imageResponse.blob();
+          const imageURL = URL.createObjectURL(imageBlob);
+
+          return {
+            id,
+            title: infoData.name,
+            price: infoData.price,
+            image: imageURL,
+            description: infoData.description,
+          };
+        });
+
+        const starredDatasets = await Promise.all(datasetPromises);
+        setStarredDatasets(starredDatasets);
+        console.log(starredDatasets);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    if (starredDatasetIds && starredDatasetIds.length > 0) {
+      fetchStarredDatasetDetails();
+    }
+  }, [starredDatasetIds]);
+
+  const checkSellerStatus = async () => {
     try {
       const username = await getCurrentUser();
       const session = await fetchAuthSession();
-        const sessionId2 = session.tokens.idToken.toString();
-        setSessionId(sessionId2);
-        console.log("session", session);
+      const sessionId2 = session.tokens.idToken.toString();
+      setSessionId(sessionId2);
+      console.log("session", session);
 
-        const headers = {
-          Authorization: "Bearer " + sessionId2,
-        };
+      const headers = {
+        Authorization: "Bearer " + sessionId2,
+      };
 
-      console.log('id: ', username)
+      console.log("id: ", username);
 
       if (!username) return;
       console.log("Checking seller status...");
 
-      const response = await fetch(`http://localhost:8080/api/public/user/${username.username}/isSeller`, {
-        method: "GET",
-        // headers: headers,
-      });
+      const response = await fetch(
+        `http://localhost:8080/api/public/user/${username.username}/isSeller`,
+        {
+          method: "GET",
+          // headers: headers,
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to check seller status");
@@ -371,14 +456,13 @@ const Profile = () => {
               className="w-24 h-24 rounded-full mr-6"
             />
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">Aaron Xie</h1>
-              <p className="text-gray-600">
+              <h1 className="text-3xl font-bold text-gray-800">
+                {" "}
                 {userEmail || "jane.doe@example.com"}
-              </p>
+              </h1>
+              <p>{isSeller ? "seller: true" : "seller: false"}</p>
             </div>
           </div>
-
-          <p>{isSeller ? "seller: true" : "seller: false"}</p>
 
           <div className="mt-10">
             <h2 className="text-xl font-semibold text-gray-800">
