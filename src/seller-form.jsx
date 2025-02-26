@@ -155,7 +155,7 @@ const SellerForm = () => {
             alert("Your seller application has been submitted successfully.");
         } else {
             console.error("Submission failed:", result);
-            alert("Submission failed. Please check your input and try again.");
+            alert("Submission failed. You've already submitted a form and are pending approval.");
         }
     } catch (error) {
         console.error("Error submitting form:", error);
