@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronUp, ChevronDown, X } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { ChevronUp, ChevronDown, X } from "lucide-react";
 import { fetchAuthSession } from "aws-amplify/auth";
-import { Input } from './components/ui/input';
+import { Input } from "./components/ui/input";
 
 const Response = ({ response, datasetId, onDelete }) => {
   return (
@@ -11,19 +11,19 @@ const Response = ({ response, datasetId, onDelete }) => {
           <span className="text-xs text-gray-900">{response.content}</span>
           <div className="flex items-center gap-2">
             <span className="text-xs text-gray-500">
-              {response.username} · {new Date(response.timestamp).toLocaleString()}
+              {response.username} ·{" "}
+              {new Date(response.timestamp).toLocaleString()}
             </span>
-            
-              <button
-                onClick={() => {
-                  console.log("cough ", response)
-                  onDelete(datasetId, response.forumID)
-                }}
-                className="text-xs text-red-500 hover:text-red-600"
-              >
-                Delete
-              </button>
-            
+
+            <button
+              onClick={() => {
+                console.log("cough ", response);
+                onDelete(datasetId, response.forumID);
+              }}
+              className="text-xs text-red-500 hover:text-red-600"
+            >
+              Delete
+            </button>
           </div>
         </div>
         {/* in case you want something to the far right */}
@@ -34,24 +34,24 @@ const Response = ({ response, datasetId, onDelete }) => {
   );
 };
 
-const ForumPost = ({ 
-  post, 
+const ForumPost = ({
+  post,
   datasetId,
-  onVote, 
+  onVote,
   onAddResponse,
   onDelete,
   responses,
-  onDeleteResponse
+  onDeleteResponse,
 }) => {
   const [isResponsesVisible, setIsResponsesVisible] = useState(false);
   const [isFormVisible, setIsFormVisible] = useState(false);
-  const [newResponse, setNewResponse] = useState('');
-  
+  const [newResponse, setNewResponse] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (newResponse.trim()) {
       await onAddResponse(datasetId, post.forumID, newResponse);
-      setNewResponse('');
+      setNewResponse("");
     }
   };
 
@@ -60,14 +60,14 @@ const ForumPost = ({
       <div className="flex gap-4">
         <div className="flex flex-col items-center">
           <button
-            onClick={() => onVote(datasetId, post.forumID, 'upvote')}
+            onClick={() => onVote(datasetId, post.forumID, "upvote")}
             className="hover:bg-gray-100 rounded p-1"
           >
             <ChevronUp size={16} className="text-gray-400" />
           </button>
           <span className="text-xs text-gray-600">{post.upvotes}</span>
           <button
-            onClick={() => onVote(datasetId, post.forumID, 'downvote')}
+            onClick={() => onVote(datasetId, post.forumID, "downvote")}
             className="hover:bg-gray-100 rounded p-1"
           >
             <ChevronDown size={16} className="text-gray-400" />
@@ -76,72 +76,77 @@ const ForumPost = ({
 
         <div className="flex-1">
           <div className="flex justify-between">
-            <h2 className="text-base font-medium text-gray-900">{post.title}</h2>
-            
-              <button
-                onClick={() => onDelete(datasetId, post.forumID)}
-                className="text-xs text-red-500 hover:text-red-600"
-              >
-                Delete
-              </button>
-           
+            <h2 className="text-base font-medium text-gray-900">
+              {post.title}
+            </h2>
+
+            <button
+              onClick={() => onDelete(datasetId, post.forumID)}
+              className="text-xs text-red-500 hover:text-red-600"
+            >
+              Delete
+            </button>
           </div>
           <span className="text-sm text-gray-700 mt-1">{post.content}</span>
           <div className="flex items-center text-xs text-gray-500 mt-2">
             by {post.username} · {new Date(post.timestamp).toLocaleString()} ·
-            <button 
-              className='text-blue-500 hover:text-blue-600 hover:underline'
+            <button
+              className="text-blue-500 hover:text-blue-600 hover:underline"
               onClick={() => setIsFormVisible(!isFormVisible)}
             >
               reply
-            </button> ·
+            </button>{" "}
+            ·
             <button
               onClick={() => setIsResponsesVisible(!isResponsesVisible)}
               className="text-blue-500 hover:text-blue-600 hover:underline"
             >
-              {responses.length} {responses.length === 1 ? 'response' : 'responses'}
+              {responses.length}{" "}
+              {responses.length === 1 ? "response" : "responses"}
             </button>
           </div>
         </div>
       </div>
       {isFormVisible && (
         <form onSubmit={handleSubmit} className="ml-8">
-        <div className="flex gap-2">
-        <Input
-          type="text"
-          value={newResponse}
-          onChange={(e) => setNewResponse(e.target.value)}
-          placeholder="Add a response..."
-          className="flex-1 px-4 h-8 border rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-        />
-        <button
-          type="button"
-          onClick={() => {
-            setNewResponse(''); 
-            setIsFormVisible(!isFormVisible);
-          }}
-          className="px-4 h-8 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Cancel
-        </button>
-          <button
-            type="submit"
-            onClick={() => {
-              setIsResponsesVisible(!isResponsesVisible)
-            }}
-            className="px-4 h-8 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Reply
-          </button>
-        </div>
-      </form>
+          <div className="flex gap-2">
+            <Input
+              type="text"
+              value={newResponse}
+              onChange={(e) => setNewResponse(e.target.value)}
+              placeholder="Add a response..."
+              className="flex-1 px-4 h-8 border rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                setNewResponse("");
+                setIsFormVisible(!isFormVisible);
+              }}
+              className="px-4 h-8 text-xs bg-gray-400 text-white rounded hover:bg-blue-600"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              onClick={() => {
+                setIsResponsesVisible(!isResponsesVisible);
+              }}
+              className="px-4 h-8 text-xs bg-gray-700 text-white rounded hover:bg-blue-600"
+            >
+              Reply
+            </button>
+          </div>
+        </form>
       )}
 
       {isResponsesVisible && (
         <div className="mt-4">
           {responses.map((response, index) => (
             <Response
-              key={`${post.forumID}-${response.responseId || `response-${index}`}`}
+              key={`${post.forumID}-${
+                response.responseId || `response-${index}`
+              }`}
               response={response}
               datasetId={datasetId}
               onDelete={onDeleteResponse}
@@ -157,8 +162,8 @@ const Forum = ({ datasetID }) => {
   const [posts, setPosts] = useState([]);
   const [responses, setResponses] = useState({});
   const [showNewPost, setShowNewPost] = useState(false);
-  const [newPostTitle, setNewPostTitle] = useState('');
-  const [newPostContent, setNewPostContent] = useState('');
+  const [newPostTitle, setNewPostTitle] = useState("");
+  const [newPostContent, setNewPostContent] = useState("");
   const [upvoteStatus, setUpvoteStatus] = useState({});
   const [sessionId, setSessionId] = useState("");
 
@@ -171,163 +176,166 @@ const Forum = ({ datasetID }) => {
       const response = await fetch(
         `http://localhost:8080/api/public/discussions/${datasetID}/forums`
       );
-      
+
       if (!response.ok) {
         throw new Error("Failed to fetch all dataset IDs");
       }
-  
+
       const data = await response.json();
       setPosts(data);
-  
-      const forumIds = data.map(post => post.forumID);
+
+      const forumIds = data.map((post) => post.forumID);
       console.log("Forum IDs to be sent:", forumIds); // Debug log
-  
+
       const session = await fetchAuthSession();
       const idToken = session.tokens.idToken;
-  
+
       // Let's verify what we're sending
       const requestOptions = {
         method: "POST",
         headers: {
-          'Authorization': `Bearer ${idToken}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${idToken}`,
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(forumIds) // Send the array directly as JSON
+        body: JSON.stringify(forumIds), // Send the array directly as JSON
       };
-  
+
       console.log("Request options:", {
         ...requestOptions,
-        body: JSON.parse(requestOptions.body) // Log the parsed body for readability
+        body: JSON.parse(requestOptions.body), // Log the parsed body for readability
       });
-  
+
       const upvoteResponse = await fetch(
-        'http://localhost:8080/api/secure/discussions/hasUpvotedOrDownvoted', 
+        "http://localhost:8080/api/secure/discussions/hasUpvotedOrDownvoted",
         requestOptions
       );
-  
+
       if (!upvoteResponse.ok) {
         const errorText = await upvoteResponse.text();
         console.error("Response error:", {
           status: upvoteResponse.status,
           headers: Object.fromEntries([...upvoteResponse.headers]),
-          error: errorText
+          error: errorText,
         });
-        throw new Error(`Failed to fetch upvote response: ${upvoteResponse.status} - ${errorText}`);
+        throw new Error(
+          `Failed to fetch upvote response: ${upvoteResponse.status} - ${errorText}`
+        );
       }
-      
+
       const upvoteData = await upvoteResponse.json();
       const statusMap = {};
       forumIds.forEach((id, index) => {
         statusMap[id] = upvoteData[index];
       });
       setUpvoteStatus(statusMap);
-      
-      await Promise.all(data.map(post => fetchResponses(post.forumID)));
+
+      await Promise.all(data.map((post) => fetchResponses(post.forumID)));
     } catch (error) {
-      console.error('Error fetching posts:', error);
+      console.error("Error fetching posts:", error);
     }
   };
 
   const fetchResponses = async (forumId) => {
     try {
-        const response = await fetch(
-            `http://localhost:8080/api/public/discussions/${datasetID}/forum/${forumId}/responses`
-        );
-        const data = await response.json();
-        setResponses(prev => ({
-            ...prev,
-            [forumId]: data
-        }));
-    } catch (error) {
-        console.error('Error fetching responses:', error);
-    }
-};
-
-
-const handleAddPost = async (e) => {
-  e.preventDefault();
-  
-  if (newPostTitle.trim() && newPostContent.trim()) {
-      try {
-       const session = await fetchAuthSession();
-       console.log(datasetID, newPostTitle, newPostContent);
-
-       const sessionId2 = session.tokens.idToken.toString();
-       setSessionId(sessionId2);
-       
-      console.log("session", session);
- 
-      const headers = {
-        Authorization: "Bearer " + sessionId2,
-      };
-
-      const submissionData = new FormData();
-      submissionData.append("datasetId", datasetID);
-      submissionData.append("content", newPostContent);
-      submissionData.append("title", newPostTitle);
-
       const response = await fetch(
-        "http://localhost:8080/api/secure/discussions/createForum",
-        {
-          method: "POST",
-          headers: headers,
-          body: submissionData
-        }
+        `http://localhost:8080/api/public/discussions/${datasetID}/forum/${forumId}/responses`
       );
-      
+      const data = await response.json();
+      setResponses((prev) => ({
+        ...prev,
+        [forumId]: data,
+      }));
+    } catch (error) {
+      console.error("Error fetching responses:", error);
+    }
+  };
 
-          if (!response.ok) {
-              throw new Error(`Failed to create forum post: ${response.status}`);
+  const handleAddPost = async (e) => {
+    e.preventDefault();
+
+    if (newPostTitle.trim() && newPostContent.trim()) {
+      try {
+        const session = await fetchAuthSession();
+        console.log(datasetID, newPostTitle, newPostContent);
+
+        const sessionId2 = session.tokens.idToken.toString();
+        setSessionId(sessionId2);
+
+        console.log("session", session);
+
+        const headers = {
+          Authorization: "Bearer " + sessionId2,
+        };
+
+        const submissionData = new FormData();
+        submissionData.append("datasetId", datasetID);
+        submissionData.append("content", newPostContent);
+        submissionData.append("title", newPostTitle);
+
+        const response = await fetch(
+          "http://localhost:8080/api/secure/discussions/createForum",
+          {
+            method: "POST",
+            headers: headers,
+            body: submissionData,
           }
+        );
 
-          setNewPostTitle('');
-          setNewPostContent('');
-          setShowNewPost(true);
-          fetchPosts();  // Refresh posts
+        if (!response.ok) {
+          throw new Error(`Failed to create forum post: ${response.status}`);
+        }
+
+        setNewPostTitle("");
+        setNewPostContent("");
+        setShowNewPost(true);
+        fetchPosts(); // Refresh posts
       } catch (error) {
-          console.error('Error creating post:', error);
+        console.error("Error creating post:", error);
       }
-  }
-};
-
+    }
+  };
 
   const handleVote = async (datasetId, forumId, voteType) => {
     try {
-      console.log(forumId)
+      console.log(forumId);
       const session = await fetchAuthSession();
       console.log(datasetID, newPostTitle, newPostContent);
 
       const sessionId2 = session.tokens.idToken.toString();
       setSessionId(sessionId2);
-      
-     console.log("session", session);
-  
+
+      console.log("session", session);
+
       // Let's verify what we're sending
       const headers = {
         Authorization: "Bearer " + sessionId2,
       };
- 
-      const response = await fetch(`http://localhost:8080/api/secure/discussions/${datasetId}/${forumId}/${voteType}`, {
-        method: "POST",
-        headers: headers
 
-      });
+      const response = await fetch(
+        `http://localhost:8080/api/secure/discussions/${datasetId}/${forumId}/${voteType}`,
+        {
+          method: "POST",
+          headers: headers,
+        }
+      );
       const changeAmount = await response.json();
-      console.log(changeAmount)
+      console.log(changeAmount);
       // Update the posts with the new vote count
-      setPosts(posts.map(post => 
-        post.forumId === forumId 
-          ? { ...post, upvotes: post.upvotes + changeAmount } 
-          : post
-      ));
-      fetchPosts()
+      setPosts(
+        posts.map((post) =>
+          post.forumId === forumId
+            ? { ...post, upvotes: post.upvotes + changeAmount }
+            : post
+        )
+      );
+      fetchPosts();
       // Update the upvote status
-      setUpvoteStatus(prev => ({
+      setUpvoteStatus((prev) => ({
         ...prev,
-        [forumId]: voteType === 'upvote' ? 'upvoted' : 'downvoted'
+        [forumId]: voteType === "upvote" ? "upvoted" : "downvoted",
       }));
     } catch (error) {
-      console.error('Error voting:', error);
+      console.error("Error voting:", error);
     }
   };
 
@@ -338,26 +346,29 @@ const handleAddPost = async (e) => {
 
       const sessionId2 = session.tokens.idToken.toString();
       setSessionId(sessionId2);
-      
-     console.log("session", session);
 
-     const headers = {
-       Authorization: "Bearer " + sessionId2,
-     };
+      console.log("session", session);
 
-     const submissionData = new FormData();
-     submissionData.append("datasetId", datasetID);
-     submissionData.append("content", content);
-     submissionData.append("forumId", forumId);
-      await fetch('http://localhost:8080/api/secure/discussions/createResponse', {
-        method: 'POST',
-        headers: headers,
-        
-        body: submissionData
-      });
+      const headers = {
+        Authorization: "Bearer " + sessionId2,
+      };
+
+      const submissionData = new FormData();
+      submissionData.append("datasetId", datasetID);
+      submissionData.append("content", content);
+      submissionData.append("forumId", forumId);
+      await fetch(
+        "http://localhost:8080/api/secure/discussions/createResponse",
+        {
+          method: "POST",
+          headers: headers,
+
+          body: submissionData,
+        }
+      );
       fetchResponses(forumId);
     } catch (error) {
-      console.error('Error creating response:', error);
+      console.error("Error creating response:", error);
     }
   };
 
@@ -375,20 +386,19 @@ const handleAddPost = async (e) => {
       submissionData.append("datasetId", datasetId);
       submissionData.append("forumId", forumId);
 
-      await fetch('http://localhost:8080/api/secure/discussions/deleteForum', {
-        method: 'DELETE',
+      await fetch("http://localhost:8080/api/secure/discussions/deleteForum", {
+        method: "DELETE",
         headers: headers,
-        body: submissionData
+        body: submissionData,
       });
       fetchPosts();
     } catch (error) {
-      console.error('Error deleting post:', error);
+      console.error("Error deleting post:", error);
     }
   };
 
   const handleDeleteResponse = async (datasetId, forumId) => {
     try {
-
       const session = await fetchAuthSession();
       const sessionId2 = session.tokens.idToken.toString();
       setSessionId(sessionId2);
@@ -400,15 +410,18 @@ const handleAddPost = async (e) => {
       submissionData.append("datasetId", datasetId);
       submissionData.append("forumId", forumId);
 
-      await fetch('http://localhost:8080/api/secure/discussions/deleteResponse', {
-        method: 'DELETE',
-        headers: headers,
-        body: submissionData
-      });
-      const originalForumId = forumId.split('_')[0];
+      await fetch(
+        "http://localhost:8080/api/secure/discussions/deleteResponse",
+        {
+          method: "DELETE",
+          headers: headers,
+          body: submissionData,
+        }
+      );
+      const originalForumId = forumId.split("_")[0];
       fetchResponses(originalForumId);
     } catch (error) {
-      console.error('Error deleting response:', error);
+      console.error("Error deleting response:", error);
     }
   };
 
@@ -418,7 +431,7 @@ const handleAddPost = async (e) => {
         <h1 className="text-2xl font-bold">Discussion</h1>
         <button
           onClick={() => setShowNewPost(true)}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="px-4 py-2 bg-[#642DFF] text-white rounded-full hover:bg-[#5a26e0]"
         >
           New Post
         </button>
@@ -450,7 +463,7 @@ const handleAddPost = async (e) => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              className="px-4 py-2 bg-[#000000] text-white rounded-full hover:bg-[#414141]"
             >
               Create Post
             </button>
@@ -459,7 +472,8 @@ const handleAddPost = async (e) => {
       )}
 
       <div className="space-y-4">
-        {posts.map(post => (
+      {posts.length > 0 ? (
+        posts.map((post) => (
           <ForumPost
             key={`post-${post.forumID}`}
             post={post}
@@ -470,7 +484,12 @@ const handleAddPost = async (e) => {
             responses={responses[post.forumID] || []}
             onDeleteResponse={handleDeleteResponse}
           />
-        ))}
+        ))
+      ) : (
+        <div className="text-center text-gray-500 mt-10">
+          <p>No posts yet. Be the first to create one!</p>
+        </div>
+      )}
       </div>
     </div>
   );

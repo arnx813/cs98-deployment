@@ -175,7 +175,7 @@ export function UploadForm() {
         <div className="space-y-1 px-[10rem] py-8 md:block">
           <h1 className="text-xl mb-6 font-bold">Upload Dataset</h1>
           <Separator className="my-6" />
-          <ScrollArea className="h-[60vh] w-[75vw] overflow-hidden">
+          {/* <ScrollArea className="h-[60vh] w-[75vw] overflow-hidden"> */}
             <div className="space-y-5 px-2">
               <FormField
                 control={form.control}
@@ -249,8 +249,8 @@ export function UploadForm() {
                   <FormItem>
                     <FormLabel>Upload</FormLabel>
                     <FormControl>
-                      <div className="grid w-full max-w-sm items-center gap-1.5">
-                        <div className="flex items-center gap-2">
+                      <div className="grid w-full max-w-sm items-center gap-0">
+                        <div className="flex items-center gap-0">
                           <Button
                             as="Label"
                             variant="outline"
@@ -401,7 +401,7 @@ export function UploadForm() {
               />
             </div>
             <Button type="submit">Submit</Button>
-          </ScrollArea>
+          {/* </ScrollArea> */}
         </div>
       </form>
     </Form>

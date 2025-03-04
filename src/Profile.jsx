@@ -525,17 +525,20 @@ const Profile = () => {
         <Navbar />
         <div className="max-w-7xl mx-auto p-6">
           <div className="bg-white rounded-lg border p-6 flex items-center">
-            <img
+            {/* <img
               src={janeDoe}
               alt="Profile"
               className="w-24 h-24 rounded-full mr-6"
-            />
+            /> */}
             <div>
               <h1 className="text-3xl font-bold text-gray-800">
                 {" "}
                 {userEmail || "jane.doe@example.com"}
               </h1>
-              <p>{isSeller ? "seller: true" : "seller: false"}</p>
+              <p className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-white" 
+   style={{ backgroundColor: isSeller ? "#4CAF50" : "#F44336" }}>
+  {isSeller ? "Seller: True" : "Seller: False"}
+</p>
             </div>
           </div>
 
@@ -560,6 +563,7 @@ const Profile = () => {
                     image={dataset.image}
                     description={dataset.title}
                     price={`$${dataset.price} per month`}
+                    score={dataset.score}
                   />
                 </Link>
               ))}

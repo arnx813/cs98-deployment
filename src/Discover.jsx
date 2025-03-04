@@ -496,10 +496,10 @@ const Discover = () => {
     <div className="p-4">
       <Navbar />
       <div className="text-center my-6">
-        <p className="text-4xl">Explore our starter kit</p>
+        <p className="text-4xl">Explore Datasets</p>
       </div>
       <div className="max-w-screen-3xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {datasets.map((dataset) => (
             <Link
               to={`/dataset/${dataset.id}`}
@@ -516,6 +516,40 @@ const Discover = () => {
               />
             </Link>
           ))}
+        </div> */}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {datasetIDs.map((id) => {
+            // Find the loaded dataset details for this id
+            const dataset = datasets.find((d) => d.id === id);
+            if (!dataset) {
+              // Render a loading block if details aren't loaded yet.
+              return (
+                <div key={id} className="p-4 border rounded animate-pulse">
+                  <div className="bg-gray-300 h-24 w-full mb-4"></div>
+                  <div className="h-4 bg-gray-300 mb-2"></div>
+                  <div className="h-4 bg-gray-300 w-1/2"></div>
+                </div>
+              );
+            }
+            // If the dataset details exist, render the dataset component wrapped in a Link
+            return (
+              <Link
+                to={`/dataset/${dataset.id}`}
+                key={dataset.id}
+                // state={dataset}
+                className="block"
+              >
+                <Dataset
+                  id={dataset.id}
+                  image={dataset.image}
+                  description={dataset.title}
+                  price={`$${dataset.price} per month`}
+                  score={dataset.score}
+                />
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>
