@@ -61,7 +61,7 @@ const SellerForm = () => {
       case 3:
         return formData.datasetName && formData.datasetName.trim().length > 0;
       case 4:
-        return formData.file !== null || formData.file === null;
+        return formData.description !== null || formData.description === null;
       default:
         return false;
     }
@@ -83,91 +83,85 @@ const SellerForm = () => {
     }
   };
 
-  // const handleSubmit = () => {
-  //     console.log('Form submitted with data:', formData);
-  //     setIsCompleted(true);
-  // };
-
   const handleSubmit = async () => {
     console.log("Submitting form with data:", formData);
 
     try {
-        // Fetch the authentication session
-        const session = await fetchAuthSession();
-        const sessionId2 = session.tokens.idToken.toString();
-        setSessionId(sessionId2);
+      // Fetch the authentication session
+      const session = await fetchAuthSession();
+      const sessionId2 = session.tokens.idToken.toString();
+      setSessionId(sessionId2);
 
-        console.log("Session Retrieved:", session);
+      console.log("Session Retrieved:", session);
 
-        // Construct FormData
-        const submissionData = new FormData();
+      // Construct FormData
+      const submissionData = new FormData();
 
-        // Define the required tags and corresponding values
-        const tags = ['sellerType', 'datasetOriginInfo', 'datasetDescription', 'otherInformation'];
-        const newValues = [
-            formData.userType, // 'individual' or 'organization'
-            formData.background, // Dataset origin information
-            formData.datasetName, // Dataset description
-            formData.description || "N/A", // Other information (optional, default to "N/A")
-        ];
+      // Define the required tags and corresponding values
+      const tags = [
+        "sellerType",
+        "datasetOriginInfo",
+        "datasetDescription",
+        "otherInformation",
+      ];
+      const newValues = [
+        formData.userType, // 'individual' or 'organization'
+        formData.background, // Dataset origin information
+        formData.datasetName, // Dataset description
+        formData.description || "N/A", // Other information (optional, default to "N/A")
+      ];
 
-        // Append structured data
-        submissionData.append("tags", tags);
-        submissionData.append("newValues", newValues);
+      // Append structured data
+      submissionData.append("tags", tags);
+      submissionData.append("newValues", newValues);
 
-        // Append additional form fields
-        submissionData.append("finalized", true); // Mark as finalized
+      // Append additional form fields
+      submissionData.append("finalized", true); // Mark as finalized
 
-        // Append file(s) if provided
-        // if (formData.file) {
-        //     submissionData.append("files", formData.file);
-        // }
+      // Debug: Print FormData contents
+      console.log("Final FormData submission:");
+      for (let pair of submissionData.entries()) {
+        console.log(`${pair[0]}: ${pair[1]}`);
+      }
 
-        // Debug: Print FormData contents
-        console.log("Final FormData submission:");
-        for (let pair of submissionData.entries()) {
-            console.log(`${pair[0]}: ${pair[1]}`);
+      // Set up headers with authorization token
+      const headers = {
+        Authorization: "Bearer " + sessionId2,
+      };
+
+      // Send the request to the API
+      const response = await fetch(
+        "http://localhost:8080/api/secure/applications/setApplication",
+        {
+          method: "POST",
+          headers: headers,
+          body: submissionData, // Ensure FormData is sent as the body
         }
+      );
 
-        // Set up headers with authorization token
-        const headers = {
-            Authorization: "Bearer " + sessionId2,
-        };
+      // Handle response
+      const result = await response.text();
+      console.log("Raw response:", result);
 
-        // Send the request to the API
-        const response = await fetch(
-            "http://localhost:8080/api/secure/applications/setApplication",
-            {
-                method: "POST",
-                headers: headers,
-                body: submissionData, // Ensure FormData is sent as the body
-            }
+      if (response.ok) {
+        setIsCompleted(true); // Mark form as completed on success
+        alert("Your seller application has been submitted successfully.");
+      } else {
+        console.error("Submission failed:", result);
+        alert(
+          "Submission failed. You've already submitted a form and are pending approval."
         );
-
-        // Handle response
-        // const result = await response.json();
-        // console.log("Server Response:", result);
-            const result = await response.text();
-            console.log("Raw response:", result);
-
-        if (response.ok) {
-            setIsCompleted(true); // Mark form as completed on success
-            alert("Your seller application has been submitted successfully.");
-        } else {
-            console.error("Submission failed:", result);
-            alert("Submission failed. You've already submitted a form and are pending approval.");
-        }
+      }
     } catch (error) {
-        console.error("Error submitting form:", error);
-        alert("An error occurred while submitting the form.");
+      console.error("Error submitting form:", error);
+      alert("An error occurred while submitting the form.");
     }
-};
-
+  };
 
   const renderFormStep = () => {
     if (isCompleted) {
       return (
-        <div className="flex flex-col justify-center items-center ">
+        <div className="flex flex-col justify-center items-center flex-grow">
           <div className="size-14 flex-none h-[20vh]"></div>
           <div className="flex flex-col items-center gap-6">
             <div className="rounded-full bg-green-100 p-3">
@@ -200,16 +194,16 @@ const SellerForm = () => {
     switch (currentStep) {
       case 1:
         return (
-          <div className="flex flex-col justify-center items-center">
+          <div className="flex flex-col justify-center items-center flex-grow">
             <div className="size-14 flex-none"></div>
-            <div className="size-14 grow-7 main-form">
+            <div className="grow-7 main-form">
               <h2 className="mt-4 text-5xl mb-6">
-                Are you and individual or an organization?
+                Are you an individual or an organization?
               </h2>
-              <p className=" text-base text-gray-500">
+              <p className="text-base text-gray-500">
                 This information helps us better understand your background
               </p>
-              <div className=" py-8 justify-center items-center h-80 ">
+              <div className="py-8 justify-center items-center">
                 <RadioGroup
                   onValueChange={(value) => {
                     setFormData((prev) => ({
@@ -243,9 +237,9 @@ const SellerForm = () => {
         );
       case 2:
         return (
-          <div className="flex flex-col justify-center items-center">
+          <div className="flex flex-col justify-center items-center flex-grow">
             <div className="size-14 flex-none"></div>
-            <div className="size-14 grow-7 main-form">
+            <div className="grow-7 main-form">
               <div>
                 <h2 className="mt-4 text-5xl mb-6">
                   Where do you get your datasets?
@@ -253,7 +247,7 @@ const SellerForm = () => {
                 <p className="mb-6 text-base text-gray-500">
                   This information helps us better understand your background
                 </p>
-                <div className="flex flex-row justify-center items-center h-80 w-full">
+                <div className="flex flex-row justify-center items-center w-full">
                   <Textarea
                     name="background"
                     value={formData.background}
@@ -268,15 +262,15 @@ const SellerForm = () => {
         );
       case 3:
         return (
-          <div className="flex flex-col justify-center items-center">
+          <div className="flex flex-col justify-center items-center flex-grow">
             <div className="size-14 flex-none"></div>
-            <div className="size-14 grow-7 main-form">
+            <div className="grow-7 main-form">
               <div>
-                <h2 className="mt-4 text-5xl mb-6">Describe your Datasets</h2>
+                <h2 className="mt-4 text-5xl mb-6">Describe your dataset</h2>
                 <p className="mb-6 text-base text-gray-500">
                   This information helps us better understand your background
                 </p>
-                <div className="flex flex-row justify-center items-center h-80 w-full">
+                <div className="flex flex-row justify-center items-center w-full">
                   <Textarea
                     name="datasetName"
                     value={formData.datasetName}
@@ -291,105 +285,126 @@ const SellerForm = () => {
         );
       case 4:
         return (
-          <div className="flex flex-col justify-center items-center">
+          <div className="flex flex-col justify-center items-center flex-grow">
             <div className="size-14 flex-none"></div>
-            <div className="size-14 grow-7 main-form">
+            <div className="grow-7 main-form">
               <div>
-                <h2 className="mt-4 text-5xl mb-6">
-                  Please upload any material that will help us verify you as a
-                  seller
-                </h2>
+                <h2 className="mt-4 text-5xl mb-6">Add additional info</h2>
                 <p className="mb-6 text-base text-gray-500">
-                  This information helps us better understand your background
+                  Please add any additional information and materials that will help us verify you as a
+                  seller{" "}
                 </p>
-                <div className="flex items-center gap-4">
-                  <Button
-                    className="rounded-full"
-                    variant="outline"
-                    type="button"
-                    onClick={() =>
-                      fileInputRef.current && fileInputRef.current.click()
-                    }
-                  >
-                    <Icons.Upload className="mr-2 h-4 w-4" />
-                  </Button>
-                  <Input
-                    ref={fileInputRef}
-                    id="file-upload"
-                    type="file"
-                    className="hidden"
-                    name="file"
+                <div className="flex flex-row justify-center items-center w-full">
+                  <Textarea
+                    name="datasetName"
+                    value={formData.datasetName}
                     onChange={handleInputChange}
+                    placeholder="My Dataset contains pictures of various dogs that..."
+                    className="resize-none h-64 rounded-[1vw] text-base p-6"
                   />
-                  {formData.fileName && (
-                    <div className="mt-4 p-4 ">
-                      <p className="text-sm ">{formData.fileName}</p>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
           </div>
         );
+      // return (
+      //   <div className="flex flex-col justify-center items-center flex-grow">
+      //     <div className="size-14 flex-none"></div>
+      //     <div className="grow-7 main-form">
+      //       <div>
+      //         <h2 className="mt-4 text-5xl mb-6">
+      //           Please upload any material that will help us verify you as a
+      //           seller
+      //         </h2>
+      //         <p className="mb-6 text-base text-gray-500">
+      //           This information helps us better understand your background
+      //         </p>
+      //         <div className="flex items-center gap-4">
+      //           <Button
+      //             className="rounded-full"
+      //             variant="outline"
+      //             type="button"
+      //             onClick={() =>
+      //               fileInputRef.current && fileInputRef.current.click()
+      //             }
+      //           >
+      //             <Icons.Upload className="mr-2 h-4 w-4" />
+      //           </Button>
+      //           <Input
+      //             ref={fileInputRef}
+      //             id="file-upload"
+      //             type="file"
+      //             className="hidden"
+      //             name="file"
+      //             onChange={handleInputChange}
+      //           />
+      //           {formData.fileName && (
+      //             <div className="mt-4 p-4 ">
+      //               <p className="text-sm ">{formData.fileName}</p>
+      //             </div>
+      //           )}
+      //         </div>
+      //       </div>
+      //     </div>
+      //   </div>
+      // );
       default:
         return null;
     }
   };
 
   return (
-    <div>
-      <div className="spacing-y-8">
-        <Navbar />
-        {renderFormStep()}
-        {!isCompleted && (
-          <>
-            <div className="flex flex-row mx-8">
-              <div className="grow">
-                <Progress
-                  value={currentStep >= 1 ? 100 : 0}
-                  className="w-[99%] h-[10px] rounded-none"
-                />
-              </div>
-              <div className="grow">
-                <Progress
-                  value={currentStep >= 2 ? 100 : 0}
-                  className="w-[99%] h-[10px] rounded-none"
-                />
-              </div>
-              <div className="grow">
-                <Progress
-                  value={currentStep >= 3 ? 100 : 0}
-                  className="w-[99%] h-[10px] rounded-none"
-                />
-              </div>
-              <div className="grow">
-                <Progress
-                  value={currentStep >= 4 ? 100 : 0}
-                  className="w-[99%] h-[10px] rounded-none"
-                />
-              </div>
+    <div className="flex flex-col h-screen">
+      <Navbar />
+      <div className="flex-grow overflow-auto">{renderFormStep()}</div>
+      {!isCompleted && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white">
+          <div className="flex flex-row mx-8">
+            <div className="grow">
+              <Progress
+                value={currentStep >= 1 ? 100 : 0}
+                className="w-[99%] h-[10px] rounded-none"
+              />
             </div>
+            <div className="grow">
+              <Progress
+                value={currentStep >= 2 ? 100 : 0}
+                className="w-[99%] h-[10px] rounded-none"
+              />
+            </div>
+            <div className="grow">
+              <Progress
+                value={currentStep >= 3 ? 100 : 0}
+                className="w-[99%] h-[10px] rounded-none"
+              />
+            </div>
+            <div className="grow">
+              <Progress
+                value={currentStep >= 4 ? 100 : 0}
+                className="w-[99%] h-[10px] rounded-none"
+              />
+            </div>
+          </div>
 
-            <div className="flex flex-row mx-8">
-              <div>
-                <Button
-                  variant="link"
-                  onClick={handleBack}
-                  disabled={currentStep === 1}
-                >
-                  Back
-                </Button>
-              </div>
-              <div className="grow"></div>
-              <div>
-                <Button onClick={handleNext} disabled={!isCurrentStepValid()}>
-                  {currentStep === 4 ? "Finish" : "Next"}
-                </Button>
-              </div>
+          <div className="flex flex-row mx-8 py-4">
+            <div>
+              <Button
+                variant="link"
+                onClick={handleBack}
+                disabled={currentStep === 1}
+              >
+                Back
+              </Button>
             </div>
-          </>
-        )}
-      </div>
+            <div className="grow"></div>
+            <div>
+              <Button onClick={handleNext} disabled={!isCurrentStepValid()}>
+                {currentStep === 4 ? "Finish" : "Next"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
