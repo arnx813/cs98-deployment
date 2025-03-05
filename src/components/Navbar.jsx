@@ -52,16 +52,11 @@ const Navbar = () => {
 
       const data = await response.json();
       setIsSeller(data);
-
-
-      // console.log("Seller status:", data ? "seller: true" : "seller: false");
+      console.log("Seller status:", data ? "seller: true" : "seller: false");
     } catch (error) {
       console.error("Error checking seller status:", error);
     }
   };
-
-  console.log("im on the navbar page and u are a ", isSeller)
-
 
   useEffect(() => {
     checkSellerStatus();
@@ -166,6 +161,7 @@ const Navbar = () => {
               {searchResults.map((result, index) => (
                 <Link
                   to={`/dataset/${result.datasetID}`}
+                  // to={`/dataset/${result.id}`}
                   key={index}
                   className="block p-2 hover:bg-gray-100 cursor-pointer"
                 >
@@ -196,6 +192,15 @@ const Navbar = () => {
         >
           {isSeller ? "Sell a Dataset" : "Apply to be a Seller"}
         </button>
+
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={() => navigate("/classifiability-explainer")}
+            className="px-4 py-2 rounded-full border border-gray-300 hover:bg-gray-100 transition-all duration-300"
+          >
+            Classifiability
+          </button>
+        </div>
 
         <div className="relative">
           <button

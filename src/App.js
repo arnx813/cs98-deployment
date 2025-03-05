@@ -2,9 +2,9 @@ import React from "react";
 import { useState } from "react";
 import Login from "./Login";
 import Discover from "./Discover";
-import DatasetPage from "./DatasetPage"
+import DatasetPage from "./DatasetPage";
 import Download from "./Download";
-import Upload from "./Upload"
+import Upload from "./Upload";
 import Footer from "./components/Footer";
 import { useNavigate } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -16,8 +16,8 @@ import { UploadForm } from "./DatasetOperations/Upload-Form";
 import { Toaster } from "./components/ui/toaster";
 import DatasetOperationPage from "./DatasetOperations/page";
 import SellerForm from "./seller-form";
-import Admin from "./Admin"
-import { AdminApprovalsTable } from "./admin-form-approval"
+import Admin from "./Admin";
+import ClassifiabilityExplainer from "./ClassifiabilityExplainer";
 
 // Amplify stuff
 import { Amplify } from "aws-amplify";
@@ -38,7 +38,7 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/dataset-example" element={<DatasetPage />} />
-          <Route path="/upload" element={<Upload/>} />
+          <Route path="/upload" element={<Upload />} />
           <Route path="/view-datasets" element={<DatasetOperationPage />} />
           {/* <Route path="dataset-example" element={<DatasetPage />} /> */}
           <Route path="/dataset/:id" element={<DatasetPage />} />
@@ -46,14 +46,14 @@ function App() {
           <Route path="/checkout/:id" element={<Checkout />} />
           <Route path="/download/:id" element={<Download />} />
           <Route path="/admin" element={<Admin />} />
-
-
-          <Route path="/admin" element={<AdminApprovalsTable/>} />
+          <Route
+            path="/classifiability-explainer"
+            element={<ClassifiabilityExplainer />}
+          />
         </Routes>
-        <Toaster/>
+        <Toaster />
         <Footer />
       </Router>
-   
     </div>
   );
 }
