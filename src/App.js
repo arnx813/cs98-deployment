@@ -18,6 +18,7 @@ import DatasetOperationPage from "./DatasetOperations/page";
 import SellerForm from "./seller-form";
 import Admin from "./Admin";
 import ClassifiabilityExplainer from "./ClassifiabilityExplainer";
+import Tracer from "./components/Tracer";
 
 // Amplify stuff
 import { Amplify } from "aws-amplify";
@@ -40,6 +41,7 @@ function App() {
           <Route path="/dataset-example" element={<DatasetPage />} />
           <Route path="/upload" element={<Upload />} />
           <Route path="/view-datasets" element={<DatasetOperationPage />} />
+          <Route path="/tracer" element={<Tracer />} />
           {/* <Route path="dataset-example" element={<DatasetPage />} /> */}
           <Route path="/dataset/:id" element={<DatasetPage />} />
           <Route path="seller-form" element={<SellerForm />} />
