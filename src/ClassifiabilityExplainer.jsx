@@ -97,9 +97,39 @@ const ClassifiabilityExplainer = () => {
           </MathJax>
 
           <p className="mb-4">
-            This gives us the average loss per feature (we will explain why we
-            use average loss per feature instead of the given cost value later).
+            This gives us the average loss per feature. The reason we chose
+            average loss per function is because it allows us to use an optimal
+            denominator value for figuring out a valid classifiability score.
+            There are two approaches that can be used to determine
+            classifiability, after testing it over and over again: 1.
+            Dynamically calculate a numerator based on the average saturation of
+            the images in the dataset. This would be done by averaging all the
+            RGB values from all the images, and calculating what the average
+            "brightness" of the images are, for lack of a better term. Flattened
+            out, this n-shaped vector with constant values (where n is the
+            maximum pixels in the largest image) would serve as our numerator
+            value. The problems found in this method were that images across a
+            dataset, especially from different classes, can very drastically in
+            how "bright" they are. Hence, coming up with an average numerator
+            based on brightness was actually throwing our scores off. Ideally,
+            you could dynamically calculate a numerator value per class. 2.
+            Choose a generic average value that follows trends found in
+            flattening numpy arrays, and use this value constantly across
+            datasets. In a set of 4 datasets, where our hyperparameter was the
+            numerator in our classifiability score, we tested values of n=5000,
+            n=10000, n=15000, n=20000, n=30000 and n=40000. We found that
+            n=10000 would consistently give classifiable datasets a higher score
+            and poor datasets a lower score, based on heuristical human review,
+            and comparing it to tuning tensorflow models done locally. Hence, we
+            decided to choose 10000 for our classifiability score, as it
+            generalized the best and allowed for less computations.
           </p>
+
+          <MathJax className="mb-6 text-lg">
+            {
+              "$$\\text{classifiability_score} = \\frac{10000}{\\text{avg_loss}} \\times 100$$"
+            }
+          </MathJax>
 
           <h2 className="text-2xl font-semibold mt-6 mb-4">Conclusion</h2>
           <p>
