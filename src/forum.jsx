@@ -167,6 +167,9 @@ const Forum = ({ datasetID }) => {
   const [upvoteStatus, setUpvoteStatus] = useState({});
   const [sessionId, setSessionId] = useState("");
 
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
+
   useEffect(() => {
     fetchPosts();
   }, [datasetID]);
@@ -174,7 +177,7 @@ const Forum = ({ datasetID }) => {
   const fetchPosts = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/public/discussions/${datasetID}/forums`
+        `${BASE_URL}/api/public/discussions/${datasetID}/forums`
       );
 
       if (!response.ok) {
@@ -206,7 +209,7 @@ const Forum = ({ datasetID }) => {
       });
 
       const upvoteResponse = await fetch(
-        "http://localhost:8080/api/secure/discussions/hasUpvotedOrDownvoted",
+        `${BASE_URL}/api/secure/discussions/hasUpvotedOrDownvoted`,
         requestOptions
       );
 
@@ -238,7 +241,7 @@ const Forum = ({ datasetID }) => {
   const fetchResponses = async (forumId) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/public/discussions/${datasetID}/forum/${forumId}/responses`
+        `${BASE_URL}/api/public/discussions/${datasetID}/forum/${forumId}/responses`
       );
       const data = await response.json();
       setResponses((prev) => ({
@@ -273,7 +276,7 @@ const Forum = ({ datasetID }) => {
         submissionData.append("title", newPostTitle);
 
         const response = await fetch(
-          "http://localhost:8080/api/secure/discussions/createForum",
+          `${BASE_URL}/api/secure/discussions/createForum`,
           {
             method: "POST",
             headers: headers,
@@ -312,7 +315,7 @@ const Forum = ({ datasetID }) => {
       };
 
       const response = await fetch(
-        `http://localhost:8080/api/secure/discussions/${datasetId}/${forumId}/${voteType}`,
+         `${BASE_URL}/api/secure/discussions/${datasetId}/${forumId}/${voteType}`,
         {
           method: "POST",
           headers: headers,
@@ -358,7 +361,7 @@ const Forum = ({ datasetID }) => {
       submissionData.append("content", content);
       submissionData.append("forumId", forumId);
       await fetch(
-        "http://localhost:8080/api/secure/discussions/createResponse",
+        `${BASE_URL}/api/secure/discussions/createResponse`,
         {
           method: "POST",
           headers: headers,
@@ -386,7 +389,7 @@ const Forum = ({ datasetID }) => {
       submissionData.append("datasetId", datasetId);
       submissionData.append("forumId", forumId);
 
-      await fetch("http://localhost:8080/api/secure/discussions/deleteForum", {
+      await fetch(`${BASE_URL}/api/secure/discussions/deleteForum`, {
         method: "DELETE",
         headers: headers,
         body: submissionData,
@@ -411,7 +414,7 @@ const Forum = ({ datasetID }) => {
       submissionData.append("forumId", forumId);
 
       await fetch(
-        "http://localhost:8080/api/secure/discussions/deleteResponse",
+        `${BASE_URL}/api/secure/discussions/deleteResponse`,
         {
           method: "DELETE",
           headers: headers,
