@@ -80,6 +80,9 @@ const defaultValues = {};
 export function UploadForm() {
   const [sessionId, setSessionId] = useState("");
 
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
+
   const form = useForm({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
