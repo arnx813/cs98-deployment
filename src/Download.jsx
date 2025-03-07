@@ -8,6 +8,9 @@ const Download = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState(null);
 
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
+
   const handleDownload = async () => {
     try {
       setIsDownloading(true);
@@ -24,7 +27,7 @@ const Download = () => {
 
       // Fetch the dataset as a Blob
       const response = await fetch(
-        `http://localhost:8080/api/secure/datasets/downloadDataset/${id}`,
+        `${BASE_URL}/api/secure/datasets/downloadDataset/${id}`,
         {
           method: "GET",
           headers: headers,

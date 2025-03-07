@@ -13,6 +13,9 @@ const Checkout = () => {
   const [datasetPreviewImage, setDatasetPreviewImage] = useState(null);
   const [error, setError] = useState("");
 
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
+
   const paymentMethods = [
     {
       id: "apple-pay",
@@ -44,7 +47,7 @@ const Checkout = () => {
     const fetchDatasetName = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/public/datasets/getDatasetInformation/${id}`
+         `${BASE_URL}/api/public/datasets/getDatasetInformation/${id}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch dataset information");
@@ -60,7 +63,7 @@ const Checkout = () => {
     const fetchDatasetPreviewImage = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/public/datasets/getDatasetSinglePreviewImage/${id}`
+          `${BASE_URL}/api/public/datasets/getDatasetSinglePreviewImage/${id}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch dataset IDs");

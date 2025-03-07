@@ -10,6 +10,8 @@ const DatasetPage = () => {
   const location = useLocation();
   const { id } = useParams();
 
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
   const [dataset, setDataset] = useState({
     title: location.state?.title || "Dataset Title",
     price: location.state?.price || "99",
@@ -28,7 +30,7 @@ const DatasetPage = () => {
     const fetchDatasetDetails = async () => {
       try {
         const infoResponse = await fetch(
-          `http://localhost:8080/api/public/datasets/getDatasetInformation/${id}`
+          `${BASE_URL}/api/public/datasets/getDatasetInformation/${id}`
         );
         if (!infoResponse.ok) {
           throw new Error(`Failed to fetch dataset info for ID: ${id}`);
@@ -39,7 +41,7 @@ const DatasetPage = () => {
         setIsLoadingImages(true);
         for (let i = 0; i < 3; i++) {
           const imageResponse = await fetch(
-            `http://localhost:8080/api/public/datasets/getDatasetSinglePreviewImage/${id}?index=${i}`
+            `${BASE_URL}/api/public/datasets/getDatasetSinglePreviewImage/${id}?index=${i}`
           );
           if (!imageResponse.ok) {
             imageURLs.push("https://via.placeholder.com/400");
@@ -51,7 +53,7 @@ const DatasetPage = () => {
         }
 
         const scoreResponse = await fetch(
-          `http://localhost:8080/api/public/datasets/getScore/${id}`
+          `${BASE_URL}/api/public/datasets/getScore/${id}`
         );
         let score = null;
         if (scoreResponse.ok) {
@@ -90,7 +92,7 @@ const DatasetPage = () => {
       console.log(user);
 
       const response = await fetch(
-        `http://localhost:8080/api/secure/user/star/${id}`,
+       `${BASE_URL}/api/secure/user/star/${id}`,
         {
           method: "PUT",
           headers: headers,

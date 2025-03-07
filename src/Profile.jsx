@@ -279,6 +279,9 @@ const Profile = () => {
 
   // console.log("im on the profile page and u are a ", isS)
 
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -314,7 +317,7 @@ const Profile = () => {
         const user = await getCurrentUser();
 
         const response = await fetch(
-          "http://localhost:8080/api/secure/user/getStarred",
+          `${BASE_URL}/api/secure/user/getStarred`,
           {
             method: "GET",
             headers: headers,
@@ -343,7 +346,7 @@ const Profile = () => {
 
         const datasetPromises = starredDatasetIds.map(async (id) => {
           const infoResponse = await fetch(
-            `http://localhost:8080/api/public/datasets/getDatasetInformation/${id}`
+            `${BASE_URL}/api/public/datasets/getDatasetInformation/${id}`
           );
           if (!infoResponse.ok) {
             throw new Error(`Failed to fetch dataset info for ID: ${id}`);
@@ -351,7 +354,7 @@ const Profile = () => {
           const infoData = await infoResponse.json();
 
           const imageResponse = await fetch(
-            `http://localhost:8080/api/public/datasets/getDatasetSinglePreviewImage/${id}`
+            `${BASE_URL}/api/public/datasets/getDatasetSinglePreviewImage/${id}`
           );
           if (!imageResponse.ok) {
             throw new Error(`Failed to fetch dataset image for ID: ${id}`);
@@ -399,7 +402,7 @@ const Profile = () => {
       console.log("Checking seller status...");
 
       const response = await fetch(
-        `http://localhost:8080/api/public/user/${username.username}/isSeller`,
+        `${BASE_URL}/api/public/user/${username.username}/isSeller`,
         {
           method: "GET",
           // headers: headers,
@@ -429,7 +432,7 @@ const Profile = () => {
       const username = await getCurrentUser();
 
       const response = await fetch(
-        `http://localhost:8080/api/public/user/${username.username}/getUploaded`
+         `${BASE_URL}/api/public/user/${username.username}/getUploaded`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch user's uploaded datasets");
@@ -454,7 +457,7 @@ const Profile = () => {
 
         const datasetPromises = uploadedDatasetIds.map(async (id) => {
           const infoResponse = await fetch(
-            `http://localhost:8080/api/public/datasets/getDatasetInformation/${id}`
+            `${BASE_URL}/api/public/datasets/getDatasetInformation/${id}`
           );
           if (!infoResponse.ok) {
             throw new Error(`Failed to fetch dataset info for ID: ${id}`);
@@ -462,7 +465,7 @@ const Profile = () => {
           const infoData = await infoResponse.json();
 
           const imageResponse = await fetch(
-            `http://localhost:8080/api/public/datasets/getDatasetSinglePreviewImage/${id}`
+             `${BASE_URL}/api/public/datasets/getDatasetSinglePreviewImage/${id}`
           );
           if (!imageResponse.ok) {
             throw new Error(`Failed to fetch dataset image for ID: ${id}`);

@@ -8,6 +8,9 @@ const Admin = () => {
     const [isAdmin, setIsAdmin] = useState(false);
     const [applicants, setApplicants] = useState([]);
 
+    const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
+
     const getApplicants = async () => {
       try {
         console.log("Fetching applicants...");
@@ -21,7 +24,7 @@ const Admin = () => {
         };
   
         const response = await fetch(
-          "http://localhost:8080/api/secure/applications/getAllApplicants",
+          `${BASE_URL}/api/secure/applications/getAllApplicants`,
           {
             method: "GET",
             headers: headers,
@@ -49,7 +52,7 @@ const Admin = () => {
         Authorization: "Bearer " + sessionId,
       };
       
-      const response = await fetch("http://localhost:8080/api/secure/user/isAdmin", {
+      const response = await fetch(`${BASE_URL}/api/secure/user/isAdmin`, {
         method: "GET",
         headers: headers,
       });
@@ -77,8 +80,8 @@ const Admin = () => {
       console.log('user id provided', userID)
       
       const endpoint = action === "approve" 
-        ? `http://localhost:8080/api/secure/applications/approveApplicant/${userID}`
-        : `http://localhost:8080/api/secure/applications/rejectApplicant/${userID}`;
+        ? `${BASE_URL}/api/secure/applications/approveApplicant/${userID}`
+        : `${BASE_URL}/api/secure/applications/rejectApplicant/${userID}`;
       
       const response = await fetch(endpoint, {
         method: "POST",
