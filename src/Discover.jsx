@@ -418,11 +418,15 @@ const Discover = () => {
   const [datasets, setDatasets] = useState([]);
   const [error, setError] = useState("");
 
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
+  console.log("this is the base url: " + BASE_URL);
+
   useEffect(() => {
     const fetchDatasetIDs = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/api/public/datasets/getRandomDatasetIDs/6"
+          `${BASE_URL}/api/public/datasets/getRandomDatasetIDs/6`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch dataset IDs");
@@ -443,7 +447,7 @@ const Discover = () => {
         const datasetPromises = datasetIDs.map(async (id) => {
           // Fetch dataset information
           const infoResponse = await fetch(
-            `http://localhost:8080/api/public/datasets/getDatasetInformation/${id}`
+            `${BASE_URL}/api/public/datasets/getDatasetInformation/${id}`
           );
           if (!infoResponse.ok) {
             throw new Error(`Failed to fetch dataset info for ID: ${id}`);
@@ -452,7 +456,7 @@ const Discover = () => {
 
           // Fetch dataset preview image
           const imageResponse = await fetch(
-            `http://localhost:8080/api/public/datasets/getDatasetSinglePreviewImage/${id}`
+            `${BASE_URL}/api/public/datasets/getDatasetSinglePreviewImage/${id}`
           );
           if (!imageResponse.ok) {
             throw new Error(`Failed to fetch dataset image for ID: ${id}`);
@@ -462,7 +466,7 @@ const Discover = () => {
 
           // Fetch dataset score
           const scoreResponse = await fetch(
-            `http://localhost:8080/api/public/datasets/getScore/${id}`
+            `${BASE_URL}/api/public/datasets/getScore/${id}`
           );
           let score = null;
           if (scoreResponse.ok) {
