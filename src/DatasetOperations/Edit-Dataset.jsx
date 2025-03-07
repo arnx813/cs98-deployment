@@ -70,14 +70,12 @@ const profileFormSchema = z.object({
     })
     
 
+    const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
     const { toast } = useToast()
     const [open, setOpen] = useState(true)
     const [data, setData] = useState([])
-    
-
   
-
     const onSubmit = async (data) => {
       try {
         const formData = new FormData();
@@ -93,7 +91,7 @@ const profileFormSchema = z.object({
 
         console.log(row)
         // Send the request using fetch or axios
-        const response = await fetch('http://localhost:8080/datasets/editDatasetMetadata', {
+        const response = await fetch(`${BASE_URL}/datasets/editDatasetMetadata`, {
           method: 'POST',
           body: formData, // Ensure `FormData` is sent as the body
         });
@@ -124,7 +122,7 @@ const profileFormSchema = z.object({
 
     const getDatasets = async (datasetID) => {
         try {
-          const response = await fetch(`http://localhost:8080/datasets/getDatasetInformation/${datasetID}`);
+          const response = await fetch(`${BASE_URL}/datasets/getDatasetInformation/${datasetID}`);
           if (!response.ok) {
             throw new Error(`Failed to fetch tasks: ${response.statusText}`);
           }

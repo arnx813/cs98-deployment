@@ -20,6 +20,9 @@ const SellerForm = () => {
   const fileInputRef = React.useRef(null);
   const [isCompleted, setIsCompleted] = useState(false);
 
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
+
   const [formData, setFormData] = useState({
     background: "",
     datasetName: "",
@@ -131,7 +134,7 @@ const SellerForm = () => {
 
       // Send the request to the API
       const response = await fetch(
-        "http://localhost:8080/api/secure/applications/setApplication",
+        `${BASE_URL}/api/secure/applications/setApplication`,
         {
           method: "POST",
           headers: headers,

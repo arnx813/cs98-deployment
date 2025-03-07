@@ -14,6 +14,9 @@ import { useState } from "react";
 
 export function DatasetAction({ row, updateData }) {
   const [showEditDataset, setshowEditDataset] = useState(false);
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
+
   const handleEditClick = () => {
     setshowEditDataset(true);
     // setTimeout(() => setshowEditDataset(true), 0)
@@ -27,7 +30,7 @@ export function DatasetAction({ row, updateData }) {
   const deleteDataset = async () => {
     try {
       const user = await fetch(
-        `http://localhost:8080/datasets/deleteDataset/${row.getValue("id")}`,
+        `${BASE_URL}/datasets/deleteDataset/${row.getValue("id")}`,
         { method: "DELETE" }
       );
       // console.log(user.signInDetails.loginId);

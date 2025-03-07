@@ -41,6 +41,9 @@ export function DataTableDemo({ initialData }) {
   const [sessionId, setSessionId] = useState("");
   const [starredDatasetIds, setStarredDatasetIDs] = useState([]);
 
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
+
   const navigate = useNavigate();
 
   // const updateData = async (datasetID) => {
@@ -58,7 +61,7 @@ export function DataTableDemo({ initialData }) {
     try {
       const username = await getCurrentUser();
       const response = await fetch(
-        `http://localhost:8080/api/public/user/${username.username}/getUploaded`
+       `${BASE_URL}/api/public/user/${username.username}/getUploaded`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch user's uploaded datasets");
@@ -81,7 +84,7 @@ export function DataTableDemo({ initialData }) {
         if (uploadedDatasetIds && uploadedDatasetIds.length > 0) {
           const datasetPromises = uploadedDatasetIds.map(async (id) => {
             const infoResponse = await fetch(
-              `http://localhost:8080/api/public/datasets/getDatasetInformation/${id}`
+              `${BASE_URL}/api/public/datasets/getDatasetInformation/${id}`
             );
             if (!infoResponse.ok) {
               throw new Error(`Failed to fetch dataset info for ID: ${id}`);
@@ -89,7 +92,7 @@ export function DataTableDemo({ initialData }) {
             const infoData = await infoResponse.json();
 
             const imageResponse = await fetch(
-              `http://localhost:8080/api/public/datasets/getDatasetSinglePreviewImage/${id}`
+              `${BASE_URL}/api/public/datasets/getDatasetSinglePreviewImage/${id}`
             );
             if (!imageResponse.ok) {
               throw new Error(`Failed to fetch dataset image for ID: ${id}`);

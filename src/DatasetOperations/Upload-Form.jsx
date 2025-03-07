@@ -137,7 +137,7 @@ export function UploadForm() {
 
       // Send the request using fetch or axios
       const response = await fetch(
-        "http://localhost:8080/api/secure/datasets/uploadDataset",
+        `${BASE_URL}/api/secure/datasets/uploadDataset`,
         {
           method: "POST",
           headers: headers,
