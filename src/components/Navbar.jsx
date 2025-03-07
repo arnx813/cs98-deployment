@@ -17,6 +17,9 @@ const Navbar = () => {
   const [isSeller, setIsSeller] = useState();
   const [sessionId, setSessionId] = useState("");
 
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
+
   const navigateToUser = () => {
     navigate("/profile");
   };
@@ -39,7 +42,7 @@ const Navbar = () => {
       console.log("Checking seller status...");
 
       const response = await fetch(
-        `http://localhost:8080/api/public/user/${username.username}/isSeller`,
+        `${BASE_URL}/api/public/user/${username.username}/isSeller`,
         {
           method: "GET",
           // headers: headers,
@@ -92,7 +95,7 @@ const Navbar = () => {
   const searchDataset = async (query) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/public/search/searchDataset?query=${query}`,
+        `${BASE_URL}/api/public/search/searchDataset?query=${query}`,
         {
           method: "GET",
         }
